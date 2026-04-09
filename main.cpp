@@ -20,10 +20,10 @@ Deletion due 5.15
 using namespace std;
 
 //function defs
-void ADD();
-void fileADD();
+Node* ADD(Node* current, int data);
+void fileADD(Node* & root);
 void Display(Node* current, int depth);
-void Search();
+void Search(Node* current, int data);
 void Remove();
 void Quit();
 
@@ -68,13 +68,23 @@ int main(){
 }
 
 //add
-void ADD(){
-
+Node* ADD(Node* current, int data){
+  return current;
 }
 
 //file add
-void fileADD(){
-
+void fileADD(Node* & root){
+  string inputF;//file name store in string
+  int data;
+  cout<<"file name please"<<endl;
+  cin>>inputF;
+  cin.clear();
+  ifstream f(inputF);
+  if(f){
+    while(f>>data){
+      root = ADD(root, data);//yes. i do want to do this. I think.
+    }
+  }
 }
 
 //display
@@ -106,12 +116,41 @@ void Display(Node* current, int depth){
 }
 
 //search
-void Search(){
-
+void Search(Node* current, int data){
+  //well, this is just a binary search tree...
+  //end
+  if(!current){
+    cout<<"このNUMBER がありません。";
+    return;
+  }
+  else if(current->getD() == data){
+    cout<<current->getD()<<" "<<"exists"<<endl;
+    return;
+  }
+  else if(data >= current->getD()){//right
+    if(current->getR()!=NULL){
+      Search(current->getR(), data);
+      return;
+    }
+    cout<<"no"<<endl;
+    return;
+  }
+  else if(data < current->getD()){//left
+    if(current->getL()!=NULL){
+      Search(current->getL(), data);
+      return;
+    }
+    cout<<"NO"<<endl;
+    return;
+  }
+  else{
+    cout<<"this shouldn't happen."<<endl;
+    return;
+  }
 }
 //remove
 
-//quit
+//quit --> delete nodes like any other binary tree
 void Quit(){
 
 }
