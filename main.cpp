@@ -15,25 +15,17 @@ Deletion due 5.15
 #include <cstring>
 #include <string>
 #include <fstream>
+#include "Node.h"
 
 using namespace std;
 
 //function defs
 void ADD();
 void fileADD();
-void Display();
+void Display(Node* current, int depth);
 void Search();
 void Remove();
 void Quit();
-
-//node struct, haven't used em in a bit
-struct Node{
-  int data;
-  string color;
-  Node* right;
-  Node* left;
-  Node* parent;
-};
 
 int main(){
   //some variables
@@ -86,8 +78,18 @@ void fileADD(){
 }
 
 //display
-void Display(){
-
+void Display(Node* current, int depth){
+  //empty
+  if(!current){
+    return;
+  }
+  //leaf
+  else if(!(current->getR()) && !(current->getL())){
+    return;
+  }
+  //right
+  //center
+  //left
 }
 
 //search
