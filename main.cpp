@@ -85,11 +85,24 @@ void Display(Node* current, int depth){
   }
   //leaf
   else if(!(current->getR()) && !(current->getL())){
+    for(int i = 0; i < depth; i++){
+      cout<<"\t";
+    }
+    cout<<current->getC()<<" "<<current->getD()<<endl;
     return;
   }
-  //right
-  //center
-  //left
+  else{
+    //right
+    Display(current->getR(), depth+1);
+    //center
+    for(int i = 0; i < depth; i++){
+      cout<<"\t";
+    }
+    cout<<current->getC()<<" "<<current->getD()<<endl;
+    //left
+    Display(current->getL(), depth+1);
+  }
+  return;
 }
 
 //search
