@@ -20,19 +20,20 @@ Deletion due 5.15
 using namespace std;
 
 //function defs
-Node* ADD(Node* current, int data);
+Node* ADD(Node* parent, Node* current, int data);
 void fileADD(Node* & root);
 void Display(Node* current, int depth);
 void Search(Node* current, int data);
 void Remove();
-void Quit();
+void Quit(Node* & current);
 
 int main(){
   //some variables
   char input[2];//user input
   int running = 1;
   //root
-  Node* root = nullptr;
+  Node* root = NULL;
+  int data;//user input data
   while(running){
     cout<<"[a] add one number, [f] file add, [d] display, [s] search, [r] remove, [q] quit"<<endl;
     cin>>input;
@@ -40,6 +41,10 @@ int main(){
     cin.clear();
     if(strcmp(input,"a")==0){
       //single input
+      cout<<"gimme that value"<<endl;
+      cin>>data;
+      cin.clear();
+      root = ADD(NULL, root, data);
       cout<<"done"<<endl;
     }
     if(strcmp(input,"f")==0){
@@ -48,6 +53,7 @@ int main(){
     }
     if(strcmp(input,"d")==0){
       //display
+      Display(root, 0);
       cout<<"done"<<endl;
     }
     if(strcmp(input,"s")==0){
@@ -60,6 +66,8 @@ int main(){
     }
     if(strcmp(input,"q")==0){
       //quit
+      Quit(root);
+      Display(root, 0);
       running = 0;
     }
   }
@@ -67,9 +75,32 @@ int main(){
   return 0;
 }
 
-//add
-Node* ADD(Node* current, int data){
+//add...lets try this without passing by reference for once...
+Node* ADD(Node* parent, Node* current, int data){
+  if(!current){//found where to add. balance later
+    current = new Node();
+    current -> setD(data);
+    if(!parent){
+      current -> setC("black");
+    }
+    else{
+      current -> setC("red");
+    }
+    current->setP(parent);
+  }
+  //else if not at end
+  else{
+    if(data>=current->getD()){
+      current->setR(ADD(current, current->getR(), data));
+      return current;//uhh idk man
+    }
+    else if(data<current->getD()){
+      current->setL(ADD(current, current->getL(), data));
+      return current;
+    }
+  }
   return current;
+  //check for corrections
 }
 
 //file add
@@ -82,7 +113,7 @@ void fileADD(Node* & root){
   ifstream f(inputF);
   if(f){
     while(f>>data){
-      root = ADD(root, data);//yes. i do want to do this. I think.
+      root = ADD(NULL, root, data);//yes. i do want to do this. I think.
     }
   }
 }
@@ -151,6 +182,19 @@ void Search(Node* current, int data){
 //remove
 
 //quit --> delete nodes like any other binary tree
-void Quit(){
-
+//am a bit confised how to handle parent. 
+void Quit(Node* & current){
+  if(!current){
+    return;
+  }
+  Node* L = NULL;
+  L = current->getL();
+  Quit(L);
+  Node* R = NULL;
+  R = current->getR();
+  Quit(R);
+  current->setL(L);
+  current->setR(R);
+  delete current;
+  current=NULL;
 }
