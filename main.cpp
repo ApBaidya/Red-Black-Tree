@@ -20,6 +20,8 @@ Deletion due 5.15
 using namespace std;
 
 //function defs
+Node* leftRot(Node* current);
+Node* rightRot(Node* current);
 Node* ADD(Node* parent, Node* current, int data);
 void fileADD(Node* & root);
 void Display(Node* current, int depth);
@@ -75,6 +77,56 @@ int main(){
   return 0;
 }
 
+Node* leftRot(Node* current){
+  Node* parent = NULL;
+  parent = current->getP();
+  Node* leftSub = NULL;
+  Node* grandP = NULL;
+  if(current->getL() != NULL){//left subtree???!!!
+    leftSub = current->getL();
+    current->setL(NULL);
+    current->setP(NULL);//break it off, current has no parent
+    parent->setR(NULL);
+    leftSub->setP(parent);
+    parent->setR(leftSub);//make parent the parent of left subtree
+  }
+  if(parent->getP() == NULL){//if parent of parent is null
+    parent->setP(current);//parent becomes root
+    parent->setL(parent);
+  }
+  else if(parent->getD()<parent->getP()->getD()){//parent is left child of grandparent
+    grandP = parent->getP();
+    grandP->setL(NULL);//break parent off for j o y 
+    grandP->setL(current);//make grandP and current parent and child but LEFT
+    current->setP(grandP);
+  }
+  else{
+    grandP = parent->getP();//make grandP and current parent and child but RIGHT
+    grandP->setR(NULL);
+    grandP->setR(current);
+    current->setP(grandP);
+  }
+  current->setL(parent);//make current and parent parent and child
+  parent->setP(current);
+  return current;
+}
+
+Node* rightRot(Node* current){
+  Node* parent = NULL;
+  parent = current->getP();
+  Node* rightSub = NULL;
+  Node* grandP = NULL;
+  if(current->getR()!=NULL){//UWAAAA right subtree time
+    rightSub = current->getR();
+    current->setR(NULL);
+    parent->setL(rightSub);
+    current->setP(NULL);
+    rightSub->setP(parent);
+  }
+  return current;
+  
+}
+
 //add...lets try this without passing by reference for once...
 Node* ADD(Node* parent, Node* current, int data){
   if(!current){//found where to add. balance later
@@ -99,8 +151,8 @@ Node* ADD(Node* parent, Node* current, int data){
       return current;
     }
   }
-  return current;
   //check for corrections
+  return current;
 }
 
 //file add
