@@ -22,6 +22,7 @@ using namespace std;
 //function defs
 Node* leftRot(Node* current);
 Node* rightRot(Node* current);
+Node* Fix(Node* current);
 Node* ADD(Node* parent, Node* current, int data);
 void fileADD(Node* & root);
 void Display(Node* current, int depth);
@@ -92,7 +93,8 @@ Node* leftRot(Node* current){
   }
   if(parent->getP() == NULL){//if parent of parent is null
     parent->setP(current);//parent becomes root
-    parent->setL(parent);
+    current->setL(parent);
+    current->setP(NULL);
   }
   else if(parent->getD()<parent->getP()->getD()){//parent is left child of grandparent
     grandP = parent->getP();
@@ -117,14 +119,40 @@ Node* rightRot(Node* current){
   Node* rightSub = NULL;
   Node* grandP = NULL;
   if(current->getR()!=NULL){//UWAAAA right subtree time
-    rightSub = current->getR();
+    rightSub = current->getR();//get right sub
     current->setR(NULL);
-    parent->setL(rightSub);
     current->setP(NULL);
+    parent->setL(rightSub);
     rightSub->setP(parent);
   }
+  if(parent->getP()==NULL){//set current to root
+    parent->setP(current);
+    current->setP(NULL);
+    current->setR(parent);
+  }
+  else if(parent->getD() >= parent->getP()->getD()){//if parent is the right child of grandP, make current right child of grandP
+    grandP = parent->getP();//get grandparent
+    grandP->setR(NULL);
+    grandP->setR(current);
+    current->setP(grandP);
+  }
+  else{//make current the child of grandP
+    grandP = parent->getP();
+    parent->setP(NULL);
+    current->setP(grandP);
+    grandP->setL(current);
+  }
+  current->setR(parent);//set parent child relationship between current and parent
+  parent->setP(current);
   return current;
-  
+}
+
+Node* Fix(Node* current){
+  //case 1
+  //case 2
+  //case 3
+  //else 
+  return current;
 }
 
 //add...lets try this without passing by reference for once...
@@ -152,6 +180,7 @@ Node* ADD(Node* parent, Node* current, int data){
     }
   }
   //check for corrections
+  current = Fix(current); 
   return current;
 }
 
