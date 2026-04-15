@@ -122,9 +122,14 @@ Node* leftRot(Node* current){
 Node* rightRot(Node* current){
   cout<<"Right time"<<endl;
   Node* parent = NULL;
+  cout<<"find p"<<endl;
   parent = current->getP();
+  cout<<"current data"<<current->getD()<<endl;
+  cout<<"parent"<<parent<<endl;
+  cout<<"got P"<<endl;
   Node* rightSub = NULL;
   Node* grandP = NULL;
+  cout<<"right"<<current->getR()<<endl;
   if(current->getR()!=NULL){//UWAAAA right subtree time
     cout<<"r1"<<endl;
     rightSub = current->getR();//get right sub
@@ -175,6 +180,7 @@ Node* Fix(Node* current){
   if(parent -> getC() == "red"){
     cout<<"a"<<endl;
     //if parent is the left child of it's own parent
+    //BOY WHAT IF PARENT AND GRANDP IS NULL OI OI OI OI OI OI OI DOOCUIEHCKJEC
     if(parent->getD() < grandP->getD()){
       cout<<"a1"<<endl;
       //case 1: right child of granparent is red
@@ -185,12 +191,10 @@ Node* Fix(Node* current){
 	  //set both children to black and grandP to red
 	  parent->setC("black");
 	  grandP->getR()->setC("black");
-	  parent->setP(grandP);
-	  current->setP(parent);
-	  //assign gP to current???????
-	  current = grandP;
+	  grandP->setC("red");
+	  cout<<grandP->getC()<<endl;
 	}
-      }
+      }//end case 1
       //case 2
       else if(current->getD()>=parent->getD()){//current is right child of parent
 	cout<<"a4"<<endl;
@@ -202,7 +206,6 @@ Node* Fix(Node* current){
 	cout<<"a5"<<endl;
 	parent->setC("black");
 	grandP->setC("red");
-	parent->setP(grandP);
 	grandP = rightRot(grandP);
       }
     }
@@ -256,6 +259,7 @@ Node* ADD(Node* parent, Node* current, int data){
       current -> setC("red");
     }
     current->setP(parent);
+    cout<<"Parent"<<parent<<endl;
   }
   //else if not at end
   else{
