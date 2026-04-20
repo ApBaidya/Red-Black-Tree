@@ -20,7 +20,7 @@ Deletion due 5.15
 using namespace std;
 
 //function defs
-void leftRot(Node* & current);
+void leftRot(Node* & root, Node* & current);
 void rightRot(Node* & root, Node* & current);
 void Fix(Node* & root, Node* & current);
 void ADD(Node* & root, Node* & parent, Node* & current, int data);
@@ -83,58 +83,71 @@ int main(){
   return 0;
 }
 
-void leftRot(Node* & current){
-  cout<<"left time"<<endl;
-  /*
+void leftRot(Node* & root, Node* & current){
+  cout<<"LEFT"<<endl;
   Node* parent = NULL;
-  parent = current->getP();
+  parent=current->getP();
+  if(parent==NULL){
+    cout<<"rt root"<<endl;
+    Node* child = NULL;
+    child = current->getR();
+    child->setP(NULL);
+    current->setR(NULL);
+    //safety
+    Node* lsub = NULL;
+    lsub = child->getL();
+    //setting stuff
+    current->setR(lsub);
+    current->setP(child);
+    child->setL(current);
+    if(lsub!=NULL){
+      lsub->setP(current);
+    }
+    root = current->getP();
+    return;
+  }
+  //now onto everything that isn't the root
   Node* leftSub = NULL;
-  Node* grandP = NULL;
-  if(current->getL() != NULL){//left subtree???!!!
-    cout<<"l1"<<endl;
-    leftSub = current->getL();
-    current->setL(NULL);
-    current->setP(NULL);//break it off, current has no parent
+  Node* child = NULL;
+  child = current->getR();
+  leftSub = child->getL();
+  child->setL(NULL);
+  child->setP(NULL);
+  current->setP(NULL);
+  current->setR(NULL);
+  if(current->getD()>=parent->getD()){//current is right child
+    cout<<"L1"<<endl;
     parent->setR(NULL);
-    leftSub->setP(parent);
-    parent->setR(leftSub);//make parent the parent of left subtree
+    child->setP(parent);
+    parent->setR(child);
+    child->setL(current);
+    current->setP(child);
+    current->setR(leftSub);
   }
-  if(parent->getP() == NULL){//if parent of parent is null
-    cout<<"l2"<<endl;
-    parent->setP(current);//current becomes root
-    current->setL(parent);
-    current->setP(NULL);//well, parent is now root
+  else{//left child
+    cout<<"L2"<<endl;
+    parent->setL(NULL);
+    parent->setL(child);
+    child->setP(parent);
+    child->setL(current);
+    current->setP(child);
+    current->setR(leftSub);
   }
-  else if(parent->getD()<parent->getP()->getD()){//parent is left child of grandparent
-    cout<<"l3"<<endl;
-    grandP = parent->getP();
-    grandP->setL(NULL);//break parent off for j o y 
-    grandP->setL(current);//make grandP and current parent and child but LEFT
-    current->setP(grandP);
+  if(leftSub!=NULL){
+    leftSub->setP(current);
   }
-  else{
-    cout<<"l4"<<endl;
-    grandP = parent->getP();//make grandP and current parent and child but RIGHT
-    grandP->setR(NULL);
-    grandP->setR(current);
-    current->setP(grandP);
-  }
-  cout<<"l5"<<endl;
-  current->setL(parent);//make current and parent parent and child
-  parent->setP(current);
-  return current;*/
-  //return current;
+  return;
 }
 
 void rightRot(Node* & root, Node* & current){
   Node* parent = NULL;
   cout<<"RIGHT"<<endl;
   cout<<"find parent"<<endl;
-  cout<<"current data"<<current->getD()<<endl;
+  //cout<<"current data"<<current->getD()<<endl;
   parent = current->getP();
-  cout<<"parent"<<parent<<endl;
+  //cout<<"parent"<<parent<<endl;
   cout<<"got Parent"<<endl;
-  cout<<"Right time"<<endl;
+  //cout<<"Right time"<<endl;
   if(parent == NULL){//if we're rotating the root
     cout<<"rt root"<<endl;
     cout<<current->getD();
@@ -147,15 +160,18 @@ void rightRot(Node* & root, Node* & current){
     current->setL(rsub);//again, just in case something strange occurs
     current->setP(child);
     child->setR(current);//now move current
-    cout<<"Ha"<<endl;
-    cout<<current->getP()->getD()<<endl;
-    cout<<"pppp"<<endl;
-    cout<<current->getP()->getL()<<endl;
+    if(rsub!=NULL){
+      rsub->setP(current);
+    }
+    // cout<<"Ha"<<endl;
+    //cout<<current->getP()->getD()<<endl;
+    //cout<<"pppp"<<endl;
+    //cout<<current->getP()->getL()<<endl;
     root = current->getP();//set root
     return;
   }
   Node* rightSub = NULL;//if child has a right tree
-  Node* grandP = NULL;//not sure why this is needed
+  //Node* grandP = NULL;//not sure why this is needed
   Node* child = NULL;//child pointer
   child = current->getL();
   if(child!=NULL){//this...should always be true????????
@@ -186,59 +202,7 @@ void rightRot(Node* & root, Node* & current){
   if(rightSub!=NULL){
     rightSub->setP(current);
   }
-  /*
-  if(child->getR()!=NULL){//UWAAAA right subtree time
-    cout<<"r1"<<endl;
-    //rightSub = current->getR();//get right sub
-    current->setR(NULL);
-    current->setP(NULL);
-    parent->setL(rightSub);
-    rightSub->setP(parent);
-    }*/ 
-  //not dealing with root
-  //what to consider
-  //if 
-  /*
-  if(parent->getP()==NULL){
-    cout<<"r2"<<endl;
-    
-    /*
-    //parent->setP(NULL);
-    current->setP(NULL);
-    c = current->getL();
-    c->setP(NULL);
-    c->setP(parent);
-    parent->setL(c);
-    current->setP(c);
-    //rightSub = c->getR();
-    //c->setR(NULL);
-    //current->setL(rightSub);
-    rightSub->setP(NULL);
-    rightSub->setP(current);
-    cout<<"dddddd"<<endl;
-    c->setR(current);
-    //parent->setP(current);
-    //current->setP(NULL);
-    //current->setR(parent);
-  }
-  else if(parent->getD() >= parent->getP()->getD()){//if parent is the right child of grandP, make current right child of grandP
-    cout<<"r3"<<endl;
-    grandP = parent->getP();//get grandparent
-    grandP->setR(NULL);
-    grandP->setR(current);
-    current->setP(grandP);
-  }
-  else{//make current the child of grandP
-    cout<<"r4"<<endl;
-    grandP = parent->getP();
-    parent->setP(NULL);
-    current->setP(grandP);
-    grandP->setL(current);
-  }
-  cout<<"r5"<<endl;
-  //current->setR(parent);//set parent child relationship between current and parent
-  //parent->setP(current);
-  //return current;*/
+  return;
 }
 
 void Fix(Node* & root, Node* & current){
@@ -277,7 +241,7 @@ void Fix(Node* & root, Node* & current){
 	cout<<"a4"<<endl;
 	current = parent;
 	//we're gonna take a look at parent
-	leftRot(current);
+	leftRot(root, current);
       }
       //case 3 black uncle l i n e
       else{
@@ -290,7 +254,7 @@ void Fix(Node* & root, Node* & current){
       }
     }
     //else
-    else{
+    else{//parent is right child of grandP
       cout<<"b"<<endl;
       if(grandP->getL() != NULL){//if grandP's left child is red
 	cout<<"b1"<<endl;
@@ -301,14 +265,20 @@ void Fix(Node* & root, Node* & current){
 	  parent->setC("black");
 	}
       }
-      //else current is left child of parent
+      //else current is left child of parent t r i a n g l e
       else if(current->getD()<parent->getD()){
 	cout<<"b3"<<endl;
 	current = parent;
-	//rightRot(current);
+	rightRot(root, current);
 	current->setC("black");
 	grandP->setC("red");
-	leftRot(grandP);
+	leftRot(root, grandP);
+      }
+      else{//l i n e 
+	cout<<"b4"<<endl;
+	parent->setC("black");
+	grandP->setC("red");
+	leftRot(root, grandP);
       }
       //WHAT IF CURRENT IS RIGHT CHILD OF PARENT*/
     }
