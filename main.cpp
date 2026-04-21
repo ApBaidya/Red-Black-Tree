@@ -1,5 +1,5 @@
 /*
-Aparajita Baidya 4.16.2026
+Aparajita Baidya 4.21.2026
 Red Black Tree
 
 Insertion due 4.24
@@ -49,14 +49,14 @@ int main(){
       cin.clear();
       Node* tPar = NULL;
       ADD(root, tPar, root, data);
-      cout<<root->getD();
-      cout<<"done"<<root->getP()<<endl;
+      //cout<<root->getD();
+      //cout<<"done"<<root->getP()<<endl;
       if(root->getP()!= NULL){
-	cout<<root->getP()->getD()<<root->getP()->getL()->getD()<<root->getL()<<endl;
+	//cout<<root->getP()->getD()<<root->getP()->getL()->getD()<<root->getL()<<endl;
       }
     }
     if(strcmp(input,"f")==0){
-      //file
+      fileADD(root);
       cout<<"done"<<endl;
     }
     if(strcmp(input,"d")==0){
@@ -65,7 +65,10 @@ int main(){
       cout<<"done"<<endl;
     }
     if(strcmp(input,"s")==0){
-      //search
+      cout<<"what value do you wanna look for?"<<endl;
+      cin>>data;
+      cin.clear();
+      Search(root, data);
       cout<<"done"<<endl;
     }
     if(strcmp(input,"r")==0){
@@ -78,6 +81,7 @@ int main(){
       Display(root, 0);
       running = 0;
     }
+    cout<<endl;
   }
   cout<<"Bye!"<<endl;
   return 0;
@@ -142,11 +146,11 @@ void leftRot(Node* & root, Node* & current){
 void rightRot(Node* & root, Node* & current){
   Node* parent = NULL;
   cout<<"RIGHT"<<endl;
-  cout<<"find parent"<<endl;
+  //cout<<"find parent"<<endl;
   //cout<<"current data"<<current->getD()<<endl;
   parent = current->getP();
   //cout<<"parent"<<parent<<endl;
-  cout<<"got Parent"<<endl;
+  //cout<<"got Parent"<<endl;
   //cout<<"Right time"<<endl;
   if(parent == NULL){//if we're rotating the root
     cout<<"rt root"<<endl;
@@ -208,79 +212,100 @@ void rightRot(Node* & root, Node* & current){
 void Fix(Node* & root, Node* & current){
   cout<<"entered fix"<<endl;;
   Node* parent = NULL;
-  cout<<1<<endl;
+  //cout<<1<<endl;
   parent = current->getP();
-  cout<<2<<endl;
+  //cout<<2<<endl;
   if(parent == NULL){
     cout<<"hello, root"<<endl;
     return;
     //return current;
   }
+  string unc = "black";
   Node* grandP = NULL;
   grandP = parent->getP();
   //if parent of current is red
-  if(parent -> getC() == "red"){
-    cout<<"a"<<endl;
+  if(parent -> getC() == "red" && current->getC()=="red"){
+    //cout<<"a"<<endl;
     //if parent is the left child of it's own parent
     if(parent->getD() < grandP->getD()){
-      cout<<"a1"<<endl;
+      cout<<"a1"<<"parent is left child of grandP"<<endl;
       //case 1: right child of grandparent is red
       if(grandP->getR()!=NULL){
-	cout<<"a2"<<endl;
+	//cout<<"a2"<<endl;
+	unc = grandP->getR()->getC();
 	if(grandP->getR()->getC() == "red"){
-	  cout<<"a3"<<endl;
+	  cout<<"a3"<<"uncle is red"<<endl;
 	  //set both children to black and grandP to red
 	  parent->setC("black");
 	  grandP->getR()->setC("black");
 	  grandP->setC("red");
 	  cout<<grandP->getC()<<endl;
+	  //Fix(root, grandP);
 	}
       }//end case 1
       //case 2 uncle is black now t r i a n g l e
-      else if(current->getD()>=parent->getD()){//current is right child of parent
-	cout<<"a4"<<endl;
-	current = parent;
-	//we're gonna take a look at parent
-	leftRot(root, current);
-      }
-      //case 3 black uncle l i n e
-      else{
-	cout<<"a5"<<endl;
-	parent->setC("black");
-	grandP->setC("red");
-	rightRot(root, grandP);
-	cout<<grandP->getP()<<endl;
-	//return;// grandP;
+      if(unc == "black"){
+	if(current->getD()>=parent->getD()){//current is right child of parent
+	  //?????????????????????????
+	  cout<<"a4"<<"Uncle black - triangle"<<endl;
+	  //current -> setC("black");
+	  current = parent;
+	  //we're gonna take a look at parent
+	  leftRot(root, parent);
+	  //current->setC("red");
+	  //grandP->setC("black");
+	  rightRot(root, grandP);
+	  current->getP()->setC("black");
+	  current->setC("red");
+	  grandP->setC("red");
+	}
+	//case 3 black uncle l i n e
+	else{
+	  cout<<"a5"<<"Uncle black - line"<<endl;
+	  parent->setC("black");
+	  grandP->setC("red");
+	  rightRot(root, grandP);
+	  cout<<grandP->getP()<<endl;
+	  //return;// grandP;
+	}
       }
     }
     //else
     else{//parent is right child of grandP
-      cout<<"b"<<endl;
+      cout<<"b"<<"parent is right child of grandp"<<endl;
+      parent = current->getP();
+      grandP = current->getP()->getP();
       if(grandP->getL() != NULL){//if grandP's left child is red
 	cout<<"b1"<<endl;
+	unc = grandP->getL()->getC();
 	if(grandP->getL()->getC() == "red"){
-	  cout<<"b2"<<endl;
+	  cout<<"b2"<<"uncle is red"<<endl;
 	  grandP->setC("red");
 	  grandP->getL()->setC("black");
 	  parent->setC("black");
 	}
       }
-      //else current is left child of parent t r i a n g l e
-      else if(current->getD()<parent->getD()){
-	cout<<"b3"<<endl;
-	current = parent;
-	rightRot(root, current);
-	current->setC("black");
-	grandP->setC("red");
-	leftRot(root, grandP);
+      if(unc == "black"){//else current is left child of parent t r i a n g l e
+	if(current->getD() < parent->getD()){
+	  //?????????????????????????????
+	  cout<<"b3"<<"current is left of parent triangle"<<endl;
+	  //current->setC("black");
+	  current = parent;
+	  rightRot(root, current);
+	  //current->setC("black");
+	  //grandP->setC("red");
+	  leftRot(root, grandP);
+	  current->getP()->setC("black");
+	  current->setC("red");
+	  grandP->setC("red");
+	}
+	else{//l i n e 
+	  cout<<"b4"<<"line"<<endl;
+	  parent->setC("black");
+	  grandP->setC("red");
+	  leftRot(root, grandP);
+	}
       }
-      else{//l i n e 
-	cout<<"b4"<<endl;
-	parent->setC("black");
-	grandP->setC("red");
-	leftRot(root, grandP);
-      }
-      //WHAT IF CURRENT IS RIGHT CHILD OF PARENT*/
     }
   }
   //set Root to black
@@ -308,7 +333,7 @@ void ADD(Node* & root, Node* & parent, Node* & current, int data){
       current -> setC("red");
     }
     current->setP(parent);
-    cout<<"Parent"<<parent<<endl;
+    //cout<<"Parent"<<parent<<endl;
     if(parent!=NULL){
       if(current->getD()<parent->getD()){
 	parent->setL(current);
@@ -316,11 +341,11 @@ void ADD(Node* & root, Node* & parent, Node* & current, int data){
       else{
 	parent->setR(current);
       }
-      
+      /*      
       cout<<"hey"<<endl;
       Fix(root, current);
       cout<<"donde"<<endl;
-      cout<<current->getD()<<endl;
+      cout<<current->getD()<<endl;*/
     }
   }
   //else if not at end
@@ -329,24 +354,26 @@ void ADD(Node* & root, Node* & parent, Node* & current, int data){
       Node* r = NULL;
       r = current->getR();
       ADD(root, current, r, data);
-      return;
+      //return;
       //current->setR(r);
     }
     else if(data<current->getD()){
       Node* l = NULL;
       l = current -> getL();
       ADD(root, current, l, data);
-      return;
+      //return;
       //current->setL(l);
     }
   }
   //check for corrections
-  /*
-  cout<<"hey"<<endl;
-  Fix(current);
-  cout<<"donde"<<endl;
+  
+  //cout<<"hey"<<endl;
   cout<<current->getD()<<endl;
-  return;*/
+  Display(root, 0);
+  Fix(root, current);
+  Display(root, 0);
+  //cout<<"donde"<<endl;
+  return;
 }
 
 //file add
