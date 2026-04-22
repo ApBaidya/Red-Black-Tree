@@ -368,10 +368,10 @@ void ADD(Node* & root, Node* & parent, Node* & current, int data){
   //check for corrections
   
   //cout<<"hey"<<endl;
-  cout<<current->getD()<<endl;
-  Display(root, 0);
+  //cout<<current->getD()<<endl;
+  //Display(root, 0);
   Fix(root, current);
-  Display(root, 0);
+  //Display(root, 0);
   //cout<<"donde"<<endl;
   return;
 }
