@@ -403,7 +403,11 @@ void Display(Node* current, int depth){
     for(int i = 0; i < depth; i++){
       cout<<"\t";
     }
-    cout<<current->getC()<<" "<<current->getD()<<endl;
+    cout<<current->getC()<<" "<<current->getD();
+    if(current->getP()!=NULL){
+      cout<<"("<<current->getP()->getD()<<")";
+    }
+    cout<<endl;
     return;
   }
   else{
@@ -413,7 +417,11 @@ void Display(Node* current, int depth){
     for(int i = 0; i < depth; i++){
       cout<<"\t";
     }
-    cout<<current->getC()<<" "<<current->getD()<<endl;
+    cout<<current->getC()<<" "<<current->getD();
+    if(current->getP()!=NULL){
+      cout<<"("<<current->getP()->getD()<<")";
+    }
+    cout<<endl;
     //left
     Display(current->getL(), depth+1);
   }
