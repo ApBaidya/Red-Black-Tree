@@ -1,13 +1,15 @@
 /*
-Aparajita Baidya 4.23.2026
+Aparajita Baidya 4.24.2026
 Red Black Tree
 
+DONE
 Insertion due 4.24
 -add one number or file input --> update tree
 -print
-
-Deletion due 5.15
 -search
+
+TO DO
+Deletion due 5.15
 -remove --> update tree
 */
 
@@ -20,6 +22,8 @@ Deletion due 5.15
 using namespace std;
 
 //function defs
+void RemFix(Node* & root, Node* & current);
+void Remove(Node* & root, Node* & current, int data, string originalC);
 void leftRot(Node* & root, Node* & current);
 void rightRot(Node* & root, Node* & current);
 void Fix(Node* & root, Node* & current);
@@ -27,13 +31,13 @@ void ADD(Node* & root, Node* & parent, Node* & current, int data);
 void fileADD(Node* & root);
 void Display(Node* current, int depth);
 void Search(Node* current, int data);
-void Remove();
 void Quit(Node* & current);
 
 int main(){
   //some variables
   char input[2];//user input
   int running = 1;
+  string originalC = "black";
   //root
   Node* root = NULL;
   int data;//user input data
@@ -73,6 +77,10 @@ int main(){
     }
     if(strcmp(input,"r")==0){
       //remove
+      cout<<"what do you sentence to death?"<<endl;
+      cin>>data;
+      cin.clear();
+      Remove(root, root, data, originalC);
       cout<<"done"<<endl;
     }
     if(strcmp(input,"q")==0){
@@ -479,4 +487,242 @@ void Quit(Node* & current){
   current->setR(R);
   delete current;
   current=NULL;
+}
+
+//OKAY NOW ONTO PART 2 OF THIS CHAOS PROJECT
+void Case5(Node* & root, Node* & current){//weird case and color doesn't matter
+  Node* parent = NULL;
+  Node* sibling = NULL;
+  Node* impNeph = NULL;//the location of the nephew who's color we wanna change
+  parent = current->getP();
+  string rNeph = "red";//default em to red
+  string lNeph = "red";
+  //if current is right
+  if(current->getD()>=parent->getD()){
+    sibling = parent->getL();
+    //S ans s's left are black, right is red
+    if(sibling->getL() == NULL){//get color of nephews
+      lNeph = "black";
+    }
+    else{
+      lNeph = sibling->getL()->getC();
+    }
+    if(sibling->getR()==NULL){
+      rNeph = "black";
+    }
+    else{
+      rNeph = sibling->getR()->getC();
+    }
+    //now actually do the stuff
+    if(sibling->getC()=="black" && lNeph == "black" && rNeph == "right"){
+      impNeph=sibling->getR();
+      leftRot(root, sibling);
+      impNeph->setC("black");
+      
+    }
+    else{}
+  }
+  //if current is left
+  else{
+    sibling = parent->getR();
+    //get color of nephews
+    if(sibling->getL() == NULL){//get color of nephews
+      lNeph = "black";
+    }
+    else{
+      lNeph = sibling->getL()->getC();
+    }
+    if(sibling->getR()==NULL){
+      rNeph = "black";
+    }
+    else{
+      rNeph = sibling->getR()->getC();
+    }
+    //S and s's right are black, left is red
+    if(sibling->getC()=="black" && lNeph == "red" && rNeph == "black"){
+      rightRot(root, sibling);
+    }
+    else{}
+  }
+}
+
+void Case4(Node* & root, Node* & current){//parent is red, s and s's children are black, which also accounts for NULL
+  //parent black sibling red
+  Node* parent = NULL;
+  Node* sibling = NULL;
+  parent = current -> getP();
+  if(current->getD()<parent->getD()){//if current is left child, sibling is right
+    sibling = parent->getR();
+  }
+  else{
+    sibling = parent->getL();
+  }
+  string rNeph = "red";//default em to red
+  string lNeph = "red";
+  //finding color of nephews
+  if(sibling->getR()==NULL){
+    rNeph = "black";
+  }
+  else{
+    rNeph = sibling->getR()->getC();
+  }
+  if(sibling->getL()==NULL){
+    lNeph = "black";
+  }
+  else{
+    lNeph = sibling->getL()->getC();
+  }
+  
+  if(rNeph == "black" && lNeph == "black" && parent->getC() == "red" && sibling->getC()=="red"){//if both nephews are black
+      parent->setC("black");
+      sibling->setC("red");
+  }
+  else{//this case isn't so
+    Case5(root, current);
+  }
+}
+
+void Case3(Node* & root, Node* & current){//sibling is black
+  Node* parent = NULL;
+  Node* sibling = NULL;
+  parent = current -> getP();
+  if(current->getD()<parent->getD()){//current is left
+    if(parent->getR()->getC() == "black"){
+      sibling = parent->getR();
+      sibling->setC("red");
+      Case1(root, parent);
+    }
+    else{//otherwise
+      Case4(root, current);
+    }
+  }
+  else{//current is right
+    if(parent->getL()->getC()=="black"){
+      sibling = parent->getL();
+      sibling->setC("red");
+      Case1(root, parent);
+    }
+    else{//otherwise
+      Case4(root, current);
+    }
+  }
+}
+
+void Case2(Node* & root, Node* & current, char Pos){//SIBLING IS RED
+  Node* parent = NULL;
+  Node* sibling = NULL;
+  if(strcmp(Pos, 'L')==0){
+    parent = current->getP();//get the necessary materials to make a homunculus
+    sibling = parent -> getR();
+    leftRot(root, parent);//rotate between sibling and parent 
+  }
+  else{
+    parent = current->getP();
+    sibling = parent->getL();
+    rightRot(root, parent);//rotate between sibling and parent
+  }
+  string pCol = parent->getC();//switch colors
+  string sCol = sibling->getC();
+  parent->setC(sCol);
+  sibling->setC(pCol);
+  Case3(current);
+}
+
+void Case1(Node* & root, Node* & current){//CURRENT IS NEW ROOT
+  if(current->getP()==NULL){
+    root = current;
+    return;
+  }
+  else{
+    RemFix(root, current);//:3
+  }
+}
+
+//remove fix
+void RemFix(Node* & root, Node* & current){
+  if(current->getP() == NULL){//current is the new root
+    root = current;
+    return;
+  }
+  char Pos;
+  if(current->getD()<parent->getD()){//looking at left child
+    Pos = 'L';
+  }
+  if(current->getD()>=parent->getD()){
+    Pos = 'R';
+  }
+}
+
+//remove
+void Remove(Node* & root, Node* & current, int data, string originalC){
+  //find the value or dont
+  if(current == NULL){//can't find value
+    return;
+  }
+  if(current->getD()!=data){//recurse
+    if(data < current->getD()){//go left
+      Node* l = NULL;
+      l = current->getL();
+      Remove(root, l, data, originalC);
+    }
+    else{//go right
+      Node* r = NULL;
+      r = current->getR();
+      Remove(root, r, data, originalC);
+    }
+  }
+  else{//found node to delete
+    //deletion
+    Node* X = NULL;//node that replaces #1
+    Node* Y = NULL;//node to replace #2 but like, the weirdo
+    originalC = current -> getC();//store original color
+    if(current->getR()==NULL, current->getL() == NULL){//delete leaf
+      delete current;
+    }
+    //C1
+    if(current->getL()==NULL){
+      X = current->getR();
+      X -> setP(current->getP());
+      delete current;
+      current = NULL;
+      current = X;
+    }
+    //C2
+    else if(current->getR() == NULL){
+      X = current->getL();
+      X -> setP(current->getP());
+      delete current;
+      current = NULL;
+      current = X;
+    }
+    //C3 I guess we don't delete the Node at the end first and instead like...Call stuff on it and THEN delete it?
+    else{
+      //will be using x a a temp when finding the successor
+      Y = current->getR();
+      while(Y -> getL() != NULL){
+	X = Y;
+	Y = Y -> getL();
+      }
+      
+    }
+    /*
+    //red node with one black child, move c up
+    if(current->getC() == "red" && current->get)
+    //black node with red child, move c up and make black
+    //if both black....do replace and stuff, but lets take a look at the newly replaced node
+    //if N is new root, child takes its spot
+    //sibling is red. rotate sibling through the parent ans witch sibling and parent color and call case three
+    //sibling is black, color them red, and call case one on parent
+    //otherwise sibling not place just go to case 4
+    //parent red sibling and sib's children are black --> parent black and S red
+    //otherwise case 5
+    //s and s's left are black, s's right is red, current is right rotate sibling right trhough sibling, or vice versa for other side, s is red and c to black
+    //otherwise case 6
+    //parent color doesn;t matter: s is black, s left is red, and right left is ref and current is right (or vice versa) rotate thru parent, switch p and s color, make ss child black, node becomes p's color
+    }*/
+  //delete fix
+    if(originalC == "black"){
+      RemFix(root, current);
+    }
+  }
 }
