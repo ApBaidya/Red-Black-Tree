@@ -22,8 +22,15 @@ Deletion due 5.15
 using namespace std;
 
 //function defs
+void Case6(Node* & root, Node* & current);
+void Case5(Node* & root, Node* & current);
+void Case4(Node* & root, Node* & current);
+void Case3(Node* & root, Node* & current);
+void Case2(Node* & root, Node* & current);
+void Case1(Node* & root, Node* & current);
 void RemFix(Node* & root, Node* & current);
 void Remove(Node* & root, Node* & current, int data, string originalC);
+
 void leftRot(Node* & root, Node* & current);
 void rightRot(Node* & root, Node* & current);
 void Fix(Node* & root, Node* & current);
@@ -490,6 +497,50 @@ void Quit(Node* & current){
 }
 
 //OKAY NOW ONTO PART 2 OF THIS CHAOS PROJECT
+void Case6(Node* & root, Node* & current){//weirdo case 2
+  Node* parent = NULL;
+  Node* sibling = NULL;
+  Node* impNeph = NULL;
+  string rNeph = "red";//default red why not
+  string lNeph = "red";
+  string pCol;//color of parent
+  parent = current->getP();
+  if(current->getD()>=parent->getD()){//current is right
+    sibling = parent -> getL();
+    if(sibling->getL()==NULL){
+      lNeph = "black";
+    }
+    else{
+      lNeph = sibling->getL()->getC();
+    }
+    if(lNeph == "red"){
+      impNeph = sibling->getL();
+      leftRot(root, parent);//rotate thru parent
+      impNeph -> setC("black");
+      pCol = parent->getC();//time to switch color of parent and sib
+      parent->setC(sibling->getC());
+      sibling->setC(pCol);
+    }
+  }
+  else{//current is left
+    sibling = parent -> getR();
+    if(sibling->getR()==NULL){
+      rNeph = "black";
+    }
+    else{
+      rNeph = sibling->getR()->getC();
+    }
+    if(rNeph == "red"){
+      impNeph = sibling->getR();//store that nephew
+      rightRot(root, parent);//rotate
+      impNeph->setC("black");//swap colors of P and S
+      pCol = parent->getC();
+      parent->setC(sibling->getC());
+      sibling->setC(pCol);
+    }
+  }
+}
+
 void Case5(Node* & root, Node* & current){//weird case and color doesn't matter
   Node* parent = NULL;
   Node* sibling = NULL;
@@ -518,9 +569,11 @@ void Case5(Node* & root, Node* & current){//weird case and color doesn't matter
       impNeph=sibling->getR();
       leftRot(root, sibling);
       impNeph->setC("black");
-      
+      sibling->setC("red");
     }
-    else{}
+    else{
+      Case6(root, current);
+    }
   }
   //if current is left
   else{
@@ -540,9 +593,14 @@ void Case5(Node* & root, Node* & current){//weird case and color doesn't matter
     }
     //S and s's right are black, left is red
     if(sibling->getC()=="black" && lNeph == "red" && rNeph == "black"){
+      impNeph = sibling->getR();
       rightRot(root, sibling);
+      impNeph->setC("black");
+      sibling->setC("red");
     }
-    else{}
+    else{
+      Case6(root, current);
+    }
   }
 }
 
@@ -611,7 +669,7 @@ void Case3(Node* & root, Node* & current){//sibling is black
 void Case2(Node* & root, Node* & current, char Pos){//SIBLING IS RED
   Node* parent = NULL;
   Node* sibling = NULL;
-  if(strcmp(Pos, 'L')==0){
+  if(Pos=='L'){
     parent = current->getP();//get the necessary materials to make a homunculus
     sibling = parent -> getR();
     leftRot(root, parent);//rotate between sibling and parent 
@@ -625,7 +683,7 @@ void Case2(Node* & root, Node* & current, char Pos){//SIBLING IS RED
   string sCol = sibling->getC();
   parent->setC(sCol);
   sibling->setC(pCol);
-  Case3(current);
+  Case3(root, current);
 }
 
 void Case1(Node* & root, Node* & current){//CURRENT IS NEW ROOT
@@ -640,26 +698,51 @@ void Case1(Node* & root, Node* & current){//CURRENT IS NEW ROOT
 
 //remove fix
 void RemFix(Node* & root, Node* & current){
-  if(current->getP() == NULL){//current is the new root
-    root = current;
+  if(root == NULL){//no root now
     return;
   }
+  if(current->getP() == NULL){//current is the new root
+    Case1(root, current);
+    return;
+  }
+  Node* parent = NULL;
+  Node* sibling = NULL;
+  parent = current->getP();
   char Pos;
+  string sibC;
+  string rNeph;
+  string lNeph;
   if(current->getD()<parent->getD()){//looking at left child
     Pos = 'L';
   }
   if(current->getD()>=parent->getD()){
     Pos = 'R';
   }
+  /*
+  //case2
+  if(){}
+  //case3
+  else if(){}
+  //case4
+  else if(){}
+  //case5
+  else if(){}
+  //case6
+  else if(){}
+  //something wrong has happened
+  else{}
+  */
 }
 
 //remove
 void Remove(Node* & root, Node* & current, int data, string originalC){
   //find the value or dont
   if(current == NULL){//can't find value
+    cout<<"nothing to remove"<<endl;
     return;
   }
   if(current->getD()!=data){//recurse
+    cout<<"looking"<<endl;
     if(data < current->getD()){//go left
       Node* l = NULL;
       l = current->getL();
@@ -673,55 +756,67 @@ void Remove(Node* & root, Node* & current, int data, string originalC){
   }
   else{//found node to delete
     //deletion
+    cout<<"found it"<<endl;
     Node* X = NULL;//node that replaces #1
-    Node* Y = NULL;//node to replace #2 but like, the weirdo
+    Node* Y = NULL;//weird in-place successor 
     originalC = current -> getC();//store original color
     if(current->getR()==NULL, current->getL() == NULL){//delete leaf
-      delete current;
+      if(root == current){
+	cout<<"delete root, all alone"<<endl;
+	delete current;
+	current = NULL;
+	root = NULL;
+      }
+      else{
+	cout<<"delete leaf"<<endl;
+	delete current;
+	current = NULL;
+      }
     }
-    //C1
-    if(current->getL()==NULL){
+    //C1 current has one leaf which is the right one, so just replace current
+    else if(current->getL()==NULL && current->getR()!= NULL){
+      cout<<"delete, has right child"<<endl;
       X = current->getR();
       X -> setP(current->getP());
       delete current;
       current = NULL;
       current = X;
     }
-    //C2
-    else if(current->getR() == NULL){
+    //C2 current has only left leaf so just replace current
+    else if(current->getR() == NULL && current->getL()!=NULL){
+      cout<<"delete, has left child"<<endl;
       X = current->getL();
       X -> setP(current->getP());
       delete current;
       current = NULL;
       current = X;
     }
-    //C3 I guess we don't delete the Node at the end first and instead like...Call stuff on it and THEN delete it?
-    else{
+    //C3 I guess we don't delete the Node at the end first and instead like...Call stuff on it and THEN delete it? Anyways, replace w/successor
+    else{//2 kids, crazy
       //will be using x a a temp when finding the successor
+      cout<<"delete, has 2 kids"<<endl;
       Y = current->getR();
       while(Y -> getL() != NULL){
 	X = Y;
 	Y = Y -> getL();
       }
-      
+      //replace current with successor data
+      current->setD(Y->getD());
+      if(Y->getR()!=NULL){//successor has a right child
+	if(Y->getC()=="red"){
+	  Remove(root, Y, data, "red");
+	  return;
+	}
+	else{//THIS IS VERY IFFY
+	  cout<<"will need to fix"<<endl;
+	  RemFix(root, Y);
+	  delete Y;
+	}
+      }
     }
-    /*
-    //red node with one black child, move c up
-    if(current->getC() == "red" && current->get)
-    //black node with red child, move c up and make black
-    //if both black....do replace and stuff, but lets take a look at the newly replaced node
-    //if N is new root, child takes its spot
-    //sibling is red. rotate sibling through the parent ans witch sibling and parent color and call case three
-    //sibling is black, color them red, and call case one on parent
-    //otherwise sibling not place just go to case 4
-    //parent red sibling and sib's children are black --> parent black and S red
-    //otherwise case 5
-    //s and s's left are black, s's right is red, current is right rotate sibling right trhough sibling, or vice versa for other side, s is red and c to black
-    //otherwise case 6
-    //parent color doesn;t matter: s is black, s left is red, and right left is ref and current is right (or vice versa) rotate thru parent, switch p and s color, make ss child black, node becomes p's color
-    }*/
-  //delete fix
+    //delete fix
     if(originalC == "black"){
+      cout<<"going to fix"<<endl;
       RemFix(root, current);
     }
   }
