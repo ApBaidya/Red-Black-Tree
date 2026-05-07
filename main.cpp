@@ -1,5 +1,5 @@
 /*
-Aparajita Baidya 4.24.2026
+Aparajita Baidya 5.6.2026
 Red Black Tree
 
 DONE
@@ -28,7 +28,7 @@ void Case4(Node* & root, Node* & current);
 void Case3(Node* & root, Node* & current);
 void Case2(Node* & root, Node* & current);
 void Case1(Node* & root, Node* & current);
-void RemFix(Node* & root, Node* & current);
+void RemFix(Node* & root, Node* & parent, Node* & current, string Pos, int loops);
 void Remove(Node* & root, Node* & current, string originalC);
 void FindRemove(Node* & root, Node* & current, int data, string originalC);
 
@@ -604,163 +604,54 @@ void Case5(Node* & root, Node* & current){//weird case and color doesn't matter
     }
   }
 }
-
-void Case4(Node* & root, Node* & current){//parent is red, s and s's children are black, which also accounts for NULL
-  //parent black sibling red
-  Node* parent = NULL;
+void RemFix(Node* & root, Node* & parent, Node* & current, string Pos, int loops){
   Node* sibling = NULL;
-  parent = current -> getP();
-  if(current->getD()<parent->getD()){//if current is left child, sibling is right
-    sibling = parent->getR();
-  }
-  else{
-    sibling = parent->getL();
-  }
-  string rNeph = "red";//default em to red
-  string lNeph = "red";
-  //finding color of nephews
-  if(sibling->getR()==NULL){
-    rNeph = "black";
-  }
-  else{
-    rNeph = sibling->getR()->getC();
-  }
-  if(sibling->getL()==NULL){
-    lNeph = "black";
-  }
-  else{
-    lNeph = sibling->getL()->getC();
-  }
-  
-  if(rNeph == "black" && lNeph == "black" && parent->getC() == "red" && sibling->getC()=="red"){//if both nephews are black
-      parent->setC("black");
-      sibling->setC("red");
-  }
-  else{//this case isn't so
-    Case5(root, current);
-  }
-}
-
-void Case3(Node* & root, Node* & current){//sibling is black
-  cout<<"case3"<<endl;
-  Node* parent = NULL;
-  Node* sibling = NULL;
-  parent = current -> getP();
-  if(current->getD()<parent->getD()){//current is left
-    sibling = parent->getR();
-    sibling->setC("red");
-    Case1(root, parent);
-  }
-  else{//current is right
-    sibling = parent->getL();
-    sibling->setC("red");
-    Case1(root, parent);
-  }
-}
-
-void Case2(Node* & root, Node* & current, char Pos){//SIBLING IS RED
-  cout<<"case 2"<<endl;
-  Node* parent = NULL;
-  Node* sibling = NULL;
-  if(Pos=='L'){
-    parent = current->getP();//get the necessary materials to make a homunculus
-     sibling = parent -> getR();
-    leftRot(root, parent);//rotate between sibling and parent 
-  }
-  else{
-    parent = current->getP();
-    sibling = parent->getL();
-    rightRot(root, parent);//rotate between sibling and parent
-  }
-  string pCol = parent->getC();//switch colors
-  string sCol = sibling->getC();
-  parent->setC(sCol);
-  sibling->setC(pCol);
-  Case3(root, current);
-}
-
-void Case1(Node* & root, Node* & current){//CURRENT IS NEW ROOT
-  if(current->getP()==NULL){
-    cout<<"case1"<<endl;
-    root = current;
-    return;
-  }
-  else{
-    cout<<"check for other fixes"<<endl;
-    RemFix(root, current);//:3
-  }
-}
-
-//remove fix
-void RemFix(Node* & root, Node* & current){
-  if(root == NULL){//no root now
-    return;
-  }
-  if(current->getP() == NULL){//current is the new root
-    Case1(root, current);
-    return;
-  }
-  Node* parent = NULL;
-  Node* sibling = NULL;
-  parent = current->getP();
-  char Pos;
-  string sibC;
-  string rNeph;
-  string lNeph;
-  if(current->getD()<parent->getD()){//looking at left child
-    Pos = 'L';
-  }
-  if(current->getD()>=parent->getD()){
-    Pos = 'R';
-  }
-  //case2
-  if(Pos == 'L'){//just finding the color of sibling
-    sibling = parent->getR();
-    if(sibling == NULL){
-      sibC = "black";
+  Node* distNeph = NULL;
+  Node* closeNeph = NULL;
+  if(loops>0){
+    if(current->getD()<parent->getD()){
+      Pos = "L";
     }
     else{
-      sibC = sibling->getC();
+      Pos = "R";
     }
   }
-  else{
-    sibling = parent->getL();
-    if(sibling == NULL){
-      sibC = "black";
-    }
-    else{
-      sibC = sibling->getC();
-    }
+  if(Pos == "L"){
+    sibling = parent->getR();
   }
-  if(sibC == "red"){
-    Case2(root, current, Pos);
-  }
-  //case3
-  else if(sibC == "black" && sibling != NULL){
-    Case3(root, current);
-  }
-  //case4...due to a missunderstanding, I tied all the functions together, so now if I call case4, it will consider if it fits case 4, and if not, it will call case 5, and so on.
-  else{
-    Case4(root, current);
-  }
-  
 }
+
 void Remove(Node* & root, Node* & current, string originalC){//actual process to delete
   //deletion
   cout<<"found it"<<endl;
   Node* X = NULL;//node that replaces #1
   Node* Y = NULL;//weird in-place successor
   Node* temp = NULL;
-  //originalC = current -> getC();//store original color
-  if(current->getR()==NULL, current->getL() == NULL){//delete leaf
-    if(root == current){
+  string Pos;//of sibling is right or left
+  //C0 we have no kids
+  if(current->getR()==NULL && current->getL() == NULL){//delete leaf
+    if(root == current){//root case
       cout<<"delete root, all alone"<<endl;
       delete current;
       current = NULL;
       root = NULL;
+      return;
     }
     else{
+      temp = current->getP();//get parent
+      if(current->getD()<temp->getD()){
+	temp->setL(NULL);
+	Pos = "L";
+      }
+      else{
+	temp->setR(NULL);
+	Pos = "R";
+      }
+      //so, current is now detached from tree
       cout<<"delete leaf"<<endl;
+      if(originalC == "black"){//special corrections for single child
+	RemFix(root, temp, current, Pos, 0);//sending parent, and Pos of deleted root. Parent to find sibling and such.
+      }
       delete current;
       current = NULL;
     }
@@ -769,19 +660,37 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
   else if(current->getL()==NULL && current->getR()!= NULL){
     cout<<"delete, has right child"<<endl;
     X = current->getR();
-    X -> setP(current->getP());
-    delete current;
-    current = NULL;
-    current = X;
+    X->setC("black");
+    //X -> setP(current->getP());
+    if(current == root){
+      delete current;
+      X->setP(NULL);
+      root = X;
+    }
+    else{
+      X -> setP(current->getP());
+      delete current;
+      (X->getP())->setR(X);
+    }
+    return;
   }
   //C2 current has only left leaf so just replace current
   else if(current->getR() == NULL && current->getL()!=NULL){
     cout<<"delete, has left child"<<endl;
     X = current->getL();
-    X -> setP(current->getP());
-    delete current;
-    current = NULL;
-    current = X;
+    X->setC("black");
+    //X -> setP(current->getP());
+    if(current == root){
+      delete current;
+      X->setP(NULL);
+      root = X;
+    }
+    else{
+      X -> setP(current->getP());
+      delete current;
+      (X->getP())->setL(X);
+    }
+    return;
   }
   //C3 I guess we don't delete the Node at the end first and instead like...Call stuff on it and THEN delete it? Anyways, replace w \
   /successor
@@ -794,61 +703,14 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
       X = Y;
       Y = Y -> getL();
     }
-    //replace current with successor data
     current->setD(Y->getD());
-    if(Y->getR()!=NULL){//successor has a right child
-      temp = Y -> getR();//get right tree of Y
-      Y -> setD(temp->getD());//replace things in Y
-      Y -> setL(temp->getL());
-      Y->setR(temp->getR());
-      //no need to reset parent.
-      //delete temp
-      if(temp->getC()=="red"){
-	Remove(root, temp, "red");//delete 
-	return;
-      }
-      else{//THIS IS VERY IFFY
-	cout<<"will need to fix"<<endl;
-	RemFix(root, temp);
-	delete temp;
-      }
-    }
-    else{//so right child doesn't exist
-      if(Y->getC()=="red"){
-	if(X==current){//we didn't have to use weird while loop
-	  Remove(root, Y, "red");
-	  X -> setR(NULL);
-	  return;
-	}
-	else{//we do have a weird successor 
-	  Remove(root, Y, "red");
-	  X->setL(NULL);
-	  return;
-	}
-      }
-      else{//we need a fix
-	if(X == current){
-	  cout<<"BANG BANG BANG"<<endl;
-	  RemFix(root, Y);
-	  delete Y;
-	  //X -> setR(NULL);
-	}
-	else{
-	  cout<<"DOWN DOWN DOWN"<<endl;
-	  RemFix(root, Y);
-	  delete Y;
-	}
-      }
-    }
-  }
-  //delete fix
-  if(originalC == "black"){
-    cout<<"going to fix"<<endl;
-    RemFix(root, current);
+    //current->setR(Y->getR());
+    //current->setL(Y)
+    Remove(root, Y, Y->getC());
+    return;
   }
 }
 
-//remove
 void FindRemove(Node* & root, Node* & current, int data, string originalC){
   //find the value or dont
   if(current == NULL){//can't find value
