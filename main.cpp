@@ -28,7 +28,7 @@ void Case4(Node* & root, Node* & current);
 void Case3(Node* & root, Node* & current);
 void Case2(Node* & root, Node* & current);
 void Case1(Node* & root, Node* & current);
-void RemFix(Node* & root, Node* & parent, Node* & current, string Pos, int loops);
+void RemFix(Node* & root, Node* & parent, int currData, int loops);
 void Remove(Node* & root, Node* & current, string originalC);
 void FindRemove(Node* & root, Node* & current, int data, string originalC);
 
@@ -498,127 +498,183 @@ void Quit(Node* & current){
 }
 
 //OKAY NOW ONTO PART 2 OF THIS CHAOS PROJECT
-void Case6(Node* & root, Node* & current){//weirdo case 2
-  Node* parent = NULL;
-  Node* sibling = NULL;
-  Node* impNeph = NULL;
-  string rNeph = "red";//default red why not
-  string lNeph = "red";
-  string pCol;//color of parent
-  parent = current->getP();
-  if(current->getD()>=parent->getD()){//current is right
-    sibling = parent -> getL();
-    if(sibling->getL()==NULL){
-      lNeph = "black";
-    }
-    else{
-      lNeph = sibling->getL()->getC();
-    }
-    if(lNeph == "red"){
-      impNeph = sibling->getL();
-      leftRot(root, parent);//rotate thru parent
-      impNeph -> setC("black");
-      pCol = parent->getC();//time to switch color of parent and sib
-      parent->setC(sibling->getC());
-      sibling->setC(pCol);
-    }
-  }
-  else{//current is left
-    sibling = parent -> getR();
-    if(sibling->getR()==NULL){
-      rNeph = "black";
-    }
-    else{
-      rNeph = sibling->getR()->getC();
-    }
-    if(rNeph == "red"){
-      impNeph = sibling->getR();//store that nephew
-      rightRot(root, parent);//rotate
-      impNeph->setC("black");//swap colors of P and S
-      pCol = parent->getC();
-      parent->setC(sibling->getC());
-      sibling->setC(pCol);
-    }
-  }
-}
-
-void Case5(Node* & root, Node* & current){//weird case and color doesn't matter
-  Node* parent = NULL;
-  Node* sibling = NULL;
-  Node* impNeph = NULL;//the location of the nephew who's color we wanna change
-  parent = current->getP();
-  string rNeph = "red";//default em to red
-  string lNeph = "red";
-  //if current is right
-  if(current->getD()>=parent->getD()){
-    sibling = parent->getL();
-    //S ans s's left are black, right is red
-    if(sibling->getL() == NULL){//get color of nephews
-      lNeph = "black";
-    }
-    else{
-      lNeph = sibling->getL()->getC();
-    }
-    if(sibling->getR()==NULL){
-      rNeph = "black";
-    }
-    else{
-      rNeph = sibling->getR()->getC();
-    }
-    //now actually do the stuff
-    if(sibling->getC()=="black" && lNeph == "black" && rNeph == "right"){
-      impNeph=sibling->getR();
-      leftRot(root, sibling);
-      impNeph->setC("black");
-      sibling->setC("red");
-    }
-    else{
-      Case6(root, current);
-    }
-  }
-  //if current is left
-  else{
-    sibling = parent->getR();
-    //get color of nephews
-    if(sibling->getL() == NULL){//get color of nephews
-      lNeph = "black";
-    }
-    else{
-      lNeph = sibling->getL()->getC();
-    }
-    if(sibling->getR()==NULL){
-      rNeph = "black";
-    }
-    else{
-      rNeph = sibling->getR()->getC();
-    }
-    //S and s's right are black, left is red
-    if(sibling->getC()=="black" && lNeph == "red" && rNeph == "black"){
-      impNeph = sibling->getR();
-      rightRot(root, sibling);
-      impNeph->setC("black");
-      sibling->setC("red");
-    }
-    else{
-      Case6(root, current);
-    }
-  }
-}
-void RemFix(Node* & root, Node* & parent, Node* & current, string Pos, int loops){
+void RemFix(Node* & root, Node* & parent, int currData, int loops){
+  cout<<"訣別の時が来たれり"<<endl;
+  cout<<currData<<endl;
+  Node* current = NULL;
   Node* sibling = NULL;
   Node* distNeph = NULL;
   Node* closeNeph = NULL;
-  if(loops>0){
-    if(current->getD()<parent->getD()){
-      Pos = "L";
+  string distNC;//colour of nephews
+  string closeNC;
+  string Pos;//pos of current to parent
+  if(parent==NULL){//at root
+    return;
+  }
+  if(currData<parent->getD()){//get position of current in relation to parent
+    Pos = "L";
+  }
+  else{
+    Pos = "R";
+  }
+  cout<<"setRel"<<endl;
+  //set up relatives, heh
+  if(Pos == "L"){//WHEN CURRENT LEFT
+    sibling = parent->getR();//get sibling
+    if(sibling == NULL){//no need to do things without sibling I Guess?
+      return;
+    }
+    distNeph = sibling->getR();
+    closeNeph = sibling->getL();
+  }
+  else{//RIGHT
+    sibling = parent->getL();
+    if(sibling == NULL){
+      return;
+    }
+    distNeph = sibling->getL();
+    closeNeph = sibling->getR();
+  }
+  cout<<"neph col find"<<endl;
+  //find color of nephews
+  if(!distNeph){
+    distNC = "black";
+  }
+  else{
+    distNC = distNeph->getC();
+  }
+  if(!closeNeph){
+    closeNC = "black";
+  }
+  else{
+    closeNC = closeNeph->getC();
+  }
+  //ONTO THE CASES
+  //CAASE 3: if sibling is red
+  if(sibling->getC() == "red"){
+    cout<<"1"<<endl;
+    if(Pos == "R"){//rotate depending on Pos
+      rightRot(root, parent);//please check this again
+      cout<<"hi"<<endl;
     }
     else{
-      Pos = "R";
+      leftRot(root, parent);
+      cout<<"hi"<<endl;
     }
-  }
-  if(Pos == "L"){
-    sibling = parent->getR();
-  }
+    parent->setC("red");//change colors
+    sibling->setC("black");
+    //dubious
+    sibling = closeNeph;
+    //even more dubious
+    if(Pos == "L"){//find new nephew
+      distNeph = sibling->getR();
+    }
+    else{
+    distNeph = sibling -> getL();
+    }
+    //CASE 6
+    if(distNeph!=NULL){
+      if(distNeph->getC() == "red" && closeNC == "black"){
+	cout<<"5"<<endl;
+	if(Pos == "L"){
+	  leftRot(root,parent);//rotate sibling into parent
+	  cout<<"hi"<<endl;
+	}
+	else{
+	  rightRot(root, parent);
+	  cout<<"hi"<<endl;
+	}
+	sibling->setC(parent->getC());
+	parent->setC("black");
+	distNeph->setC("black");
+	return;
+      }
+    }//end case 6
+    if(Pos == "L"){
+      closeNeph = sibling->getL();
+    }
+    else{
+      closeNeph = sibling->getR();
+    }
+      //CASE 5
+    if(closeNeph!=NULL){
+      if(closeNeph->getC() == "red" && distNC == "black"){
+	cout<<"6"<<endl;
+	if(Pos == "L"){
+	  rightRot(root, sibling);//rotate child into sibling
+	  cout<<"hi"<<endl;
+	}
+	else{
+	  Display(root, 0);
+	  leftRot(root, sibling);
+	  cout<<"hi"<<endl;
+	}
+	sibling->setC("red");
+	closeNeph->setC("black");
+	distNeph = sibling;
+	sibling = closeNeph;
+      }
+    }//end 5
+    //CASE 4
+    cout<<"4"<<endl;
+    sibling->setC("red");
+    parent->setC("black");
+    return;
+  }//end red
+  cout<<closeNC<<distNC<<endl;
+  //CASE 6
+  if(distNeph!=NULL){
+    if(distNeph->getC() == "red" && closeNC == "black"){
+      cout<<"5"<<endl;
+      if(Pos == "L"){
+	leftRot(root,parent);//rotate sibling into parent
+	cout<<"hi"<<endl;
+      }
+      else{
+	rightRot(root, parent);
+	cout<<"hi"<<endl;
+      }
+      sibling->setC(parent->getC());
+      parent->setC("black");
+      distNeph->setC("black");
+      return;   
+    }
+  }//end case 6
+  //CASE 5
+  if(closeNeph!=NULL){//CASE 5
+    if(closeNeph->getC() == "red" && distNC == "black"){
+      cout<<"6"<<endl;
+      if(Pos == "L"){
+	rightRot(root, sibling);//rotate child into sibling
+	cout<<"hi"<<endl;
+      }
+      else{
+	Display(root, 0);
+	leftRot(root, sibling);
+	cout<<"hi"<<endl;
+      }
+      sibling->setC("red");
+      closeNeph->setC("black");
+      distNeph = sibling;
+      sibling = closeNeph;
+    }
+  }//end 5
+  //CASE 4
+  if(parent->getC() == "red"){
+    cout<<"7"<<endl;
+    sibling->setC("red");
+    parent->setC("black");
+    return;
+  }//end case 4
+  //CASE 2
+  cout<<"8"<<endl;
+  sibling->setC("red");
+  current = parent;
+  //recursive call to check
+  Node* p2 = NULL;
+  parent = current->getP();
+  RemFix(root, parent, current->getD(), ++loops);
+  return;
 }
 
 void Remove(Node* & root, Node* & current, string originalC){//actual process to delete
@@ -627,7 +683,6 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
   Node* X = NULL;//node that replaces #1
   Node* Y = NULL;//weird in-place successor
   Node* temp = NULL;
-  string Pos;//of sibling is right or left
   //C0 we have no kids
   if(current->getR()==NULL && current->getL() == NULL){//delete leaf
     if(root == current){//root case
@@ -641,16 +696,14 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
       temp = current->getP();//get parent
       if(current->getD()<temp->getD()){
 	temp->setL(NULL);
-	Pos = "L";
       }
       else{
 	temp->setR(NULL);
-	Pos = "R";
       }
       //so, current is now detached from tree
       cout<<"delete leaf"<<endl;
       if(originalC == "black"){//special corrections for single child
-	RemFix(root, temp, current, Pos, 0);//sending parent, and Pos of deleted root. Parent to find sibling and such.
+	RemFix(root, temp, current->getD(), 0);//sending parent, and Pos of deleted root. Parent to find sibling and such.
       }
       delete current;
       current = NULL;
