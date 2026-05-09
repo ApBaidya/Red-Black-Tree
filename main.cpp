@@ -1,5 +1,5 @@
 /*
-Aparajita Baidya 5.6.2026
+Aparajita Baidya 5.9.2026
 Red Black Tree
 
 DONE
@@ -135,7 +135,7 @@ void leftRot(Node* & root, Node* & current){
   child->setP(NULL);
   current->setP(NULL);
   current->setR(NULL);
-  if(current->getD()>=parent->getD()){//current is right child
+  if(current == parent->getR()){//current is right child
     cout<<"L1"<<endl;
     parent->setR(NULL);
     child->setP(parent);
@@ -169,7 +169,7 @@ void rightRot(Node* & root, Node* & current){
   //cout<<"got Parent"<<endl;
   //cout<<"Right time"<<endl;
   if(parent == NULL){//if we're rotating the root
-    cout<<"rt root"<<endl;
+    //cout<<"rt root"<<endl;
     cout<<current->getD();
     Node* child = NULL;
     child = current -> getL();//get the child of current which will become root
@@ -201,7 +201,7 @@ void rightRot(Node* & root, Node* & current){
   child->setP(NULL);
   current->setP(NULL);
   current->setL(NULL);
-  if(current->getD() >= parent->getD()){//right child of parent
+  if( current == parent->getR()){//right child of parent
     cout<<"R1"<<endl;
     parent->setR(NULL);
     child->setP(parent);
@@ -226,28 +226,48 @@ void rightRot(Node* & root, Node* & current){
 }
 
 void Fix(Node* & root, Node* & current){
-  cout<<"entered fix"<<endl;;
+  cout<<"entered fix"<<endl;
+  Display(root, 0);
   Node* parent = NULL;
-  //cout<<1<<endl;
+  cout<<1<<endl;
   parent = current->getP();
-  //cout<<2<<endl;
+  cout<<2<<endl;
   if(parent == NULL){
     cout<<"hello, root"<<endl;
     return;
     //return current;
   }
   string unc = "black";
+  Node* uncle = NULL;
   Node* grandP = NULL;
+  //get color of uncle
+  if(parent->getP()!=NULL){
+    grandP = parent->getP();
+    if(parent == grandP->getL()){//parent is left
+      uncle = grandP->getR();
+    }
+    else{
+      uncle = grandP->getL();
+    }
+    if(uncle!=NULL){
+      unc = uncle->getC();
+      cout<<uncle->getD()<<endl;
+    }
+    else{
+      unc = "black";
+    }
+  }
+  cout<<unc<<endl;
   grandP = parent->getP();
   //if parent of current is red
   if(parent -> getC() == "red" && current->getC()=="red"){
-    //cout<<"a"<<endl;
+    cout<<"a"<<endl;
     //if parent is the left child of it's own parent
-    if(parent->getD() < grandP->getD()){
+    if(parent == grandP->getL()){
       cout<<"a1"<<"parent is left child of grandP"<<endl;
       //case 1: right child of grandparent is red
       if(grandP->getR()!=NULL){
-	//cout<<"a2"<<endl;
+	cout<<"a2"<<endl;
 	unc = grandP->getR()->getC();
 	if(grandP->getR()->getC() == "red"){
 	  cout<<"a3"<<"uncle is red"<<endl;
@@ -261,15 +281,18 @@ void Fix(Node* & root, Node* & current){
       }//end case 1
       //case 2 uncle is black now t r i a n g l e
       if(unc == "black"){
-	if(current->getD()>=parent->getD()){//current is right child of parent
+	if(current=parent->getR()){//current is right child of parent
 	  //?????????????????????????
 	  cout<<"a4"<<"Uncle black - triangle"<<endl;
 	  //current -> setC("black");
 	  current = parent;
 	  //we're gonna take a look at parent
 	  leftRot(root, parent);
-	  //current->setC("red");
-	  //grandP->setC("black");
+	  Display(root, 0);
+	  cout<<"a"<<endl;
+	  current->setC("red");
+	  grandP->setC("black");
+	  cout<<grandP->getD()<<grandP->getP()->getD()<<endl;
 	  rightRot(root, grandP);
 	  current->getP()->setC("black");
 	  current->setC("red");
@@ -302,7 +325,7 @@ void Fix(Node* & root, Node* & current){
 	}
       }
       if(unc == "black"){//else current is left child of parent t r i a n g l e
-	if(current->getD() < parent->getD()){
+	if(current== parent->getL()){
 	  //?????????????????????????????
 	  cout<<"b3"<<"current is left of parent triangle"<<endl;
 	  //current->setC("black");
@@ -491,8 +514,8 @@ void Quit(Node* & current){
   Node* R = NULL;
   R = current->getR();
   Quit(R);
-  current->setL(L);
-  current->setR(R);
+  //current->setL(L);
+  //current->setR(R);
   delete current;
   current=NULL;
 }
@@ -660,7 +683,7 @@ void RemFix(Node* & root, Node* & parent, int currData, int loops){
     }
   }//end 5
   //CASE 4
-  if(parent->getC() == "red"){
+  if(parent->getC() == "red"){//Curious why this broke everything
     cout<<"7"<<endl;
     sibling->setC("red");
     parent->setC("black");
