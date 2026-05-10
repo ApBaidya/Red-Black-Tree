@@ -1,5 +1,5 @@
 /*
-Aparajita Baidya 5.9.2026
+Aparajita Baidya 5.10.2026
 Red Black Tree
 
 DONE
@@ -28,7 +28,7 @@ void Case4(Node* & root, Node* & current);
 void Case3(Node* & root, Node* & current);
 void Case2(Node* & root, Node* & current);
 void Case1(Node* & root, Node* & current);
-void RemFix(Node* & root, Node* & parent, int currData, int loops);
+void RemFix(Node* & root, Node* & parent, Node* c, int loops);
 void Remove(Node* & root, Node* & current, string originalC);
 void FindRemove(Node* & root, Node* & current, int data, string originalC);
 
@@ -226,14 +226,14 @@ void rightRot(Node* & root, Node* & current){
 }
 
 void Fix(Node* & root, Node* & current){
-  cout<<"entered fix"<<endl;
-  Display(root, 0);
+  //cout<<"entered fix"<<endl;
+  //Display(root, 0);
   Node* parent = NULL;
-  cout<<1<<endl;
+  //cout<<1<<endl;
   parent = current->getP();
-  cout<<2<<endl;
+  //cout<<2<<endl;
   if(parent == NULL){
-    cout<<"hello, root"<<endl;
+    //cout<<"hello, root"<<endl;
     return;
     //return current;
   }
@@ -257,20 +257,20 @@ void Fix(Node* & root, Node* & current){
       unc = "black";
     }
   }
-  cout<<unc<<endl;
+  //cout<<unc<<endl;
   grandP = parent->getP();
   //if parent of current is red
   if(parent -> getC() == "red" && current->getC()=="red"){
-    cout<<"a"<<endl;
+    //cout<<"a"<<endl;
     //if parent is the left child of it's own parent
     if(parent == grandP->getL()){
-      cout<<"a1"<<"parent is left child of grandP"<<endl;
+      //cout<<"a1"<<"parent is left child of grandP"<<endl;
       //case 1: right child of grandparent is red
       if(grandP->getR()!=NULL){
-	cout<<"a2"<<endl;
+	//cout<<"a2"<<endl;
 	unc = grandP->getR()->getC();
 	if(grandP->getR()->getC() == "red"){
-	  cout<<"a3"<<"uncle is red"<<endl;
+	  //cout<<"a3"<<"uncle is red"<<endl;
 	  //set both children to black and grandP to red
 	  parent->setC("black");
 	  grandP->getR()->setC("black");
@@ -283,13 +283,13 @@ void Fix(Node* & root, Node* & current){
       if(unc == "black"){
 	if(current=parent->getR()){//current is right child of parent
 	  //?????????????????????????
-	  cout<<"a4"<<"Uncle black - triangle"<<endl;
+	  //cout<<"a4"<<"Uncle black - triangle"<<endl;
 	  //current -> setC("black");
 	  current = parent;
 	  //we're gonna take a look at parent
 	  leftRot(root, parent);
-	  Display(root, 0);
-	  cout<<"a"<<endl;
+	  //Display(root, 0);
+	  //cout<<"a"<<endl;
 	  current->setC("red");
 	  grandP->setC("black");
 	  cout<<grandP->getD()<<grandP->getP()->getD()<<endl;
@@ -300,25 +300,25 @@ void Fix(Node* & root, Node* & current){
 	}
 	//case 3 black uncle l i n e
 	else{
-	  cout<<"a5"<<"Uncle black - line"<<endl;
+	  //cout<<"a5"<<"Uncle black - line"<<endl;
 	  parent->setC("black");
 	  grandP->setC("red");
 	  rightRot(root, grandP);
-	  cout<<grandP->getP()<<endl;
+	  //cout<<grandP->getP()<<endl;
 	  //return;// grandP;
 	}
       }
     }
     //else
     else{//parent is right child of grandP
-      cout<<"b"<<"parent is right child of grandp"<<endl;
+      //cout<<"b"<<"parent is right child of grandp"<<endl;
       parent = current->getP();
       grandP = current->getP()->getP();
       if(grandP->getL() != NULL){//if grandP's left child is red
-	cout<<"b1"<<endl;
+	//cout<<"b1"<<endl;
 	unc = grandP->getL()->getC();
 	if(grandP->getL()->getC() == "red"){
-	  cout<<"b2"<<"uncle is red"<<endl;
+	  //cout<<"b2"<<"uncle is red"<<endl;
 	  grandP->setC("red");
 	  grandP->getL()->setC("black");
 	  parent->setC("black");
@@ -327,7 +327,7 @@ void Fix(Node* & root, Node* & current){
       if(unc == "black"){//else current is left child of parent t r i a n g l e
 	if(current== parent->getL()){
 	  //?????????????????????????????
-	  cout<<"b3"<<"current is left of parent triangle"<<endl;
+	  //cout<<"b3"<<"current is left of parent triangle"<<endl;
 	  //current->setC("black");
 	  current = parent;
 	  rightRot(root, current);
@@ -339,7 +339,7 @@ void Fix(Node* & root, Node* & current){
 	  grandP->setC("red");
 	}
 	else{//l i n e 
-	  cout<<"b4"<<"line"<<endl;
+	  //cout<<"b4"<<"line"<<endl;
 	  parent->setC("black");
 	  grandP->setC("red");
 	  leftRot(root, grandP);
@@ -521,9 +521,11 @@ void Quit(Node* & current){
 }
 
 //OKAY NOW ONTO PART 2 OF THIS CHAOS PROJECT
-void RemFix(Node* & root, Node* & parent, int currData, int loops){
+void RemFix(Node* & root, Node* & parent, Node* c, int loops){
   cout<<"訣別の時が来たれり"<<endl;
+  int currData = c->getD();
   cout<<currData<<endl;
+  Display(root, 0);
   Node* current = NULL;
   Node* sibling = NULL;
   Node* distNeph = NULL;
@@ -534,17 +536,28 @@ void RemFix(Node* & root, Node* & parent, int currData, int loops){
   if(parent==NULL){//at root
     return;
   }
-  if(currData<parent->getD()){//get position of current in relation to parent
+  if(c==parent->getL()){//get position of current in relation to parent
     Pos = "L";
   }
   else{
     Pos = "R";
+  }
+  if(loops == 0){
+    if(c==parent->getL()){
+      parent->setL(NULL);
+    }
+    else{
+      parent->setR(NULL);
+    }
+    delete c;
+    //so, current is now detached from tree
   }
   cout<<"setRel"<<endl;
   //set up relatives, heh
   if(Pos == "L"){//WHEN CURRENT LEFT
     sibling = parent->getR();//get sibling
     if(sibling == NULL){//no need to do things without sibling I Guess?
+      cout<<"Ret"<<endl;
       return;
     }
     distNeph = sibling->getR();
@@ -553,6 +566,7 @@ void RemFix(Node* & root, Node* & parent, int currData, int loops){
   else{//RIGHT
     sibling = parent->getL();
     if(sibling == NULL){
+      cout<<"ret"<<endl;
       return;
     }
     distNeph = sibling->getL();
@@ -597,7 +611,7 @@ void RemFix(Node* & root, Node* & parent, int currData, int loops){
     }
     //CASE 6
     if(distNeph!=NULL){
-      if(distNeph->getC() == "red" && closeNC == "black"){
+      if(distNeph->getC() == "red"){
 	cout<<"5"<<endl;
 	if(Pos == "L"){
 	  leftRot(root,parent);//rotate sibling into parent
@@ -621,7 +635,7 @@ void RemFix(Node* & root, Node* & parent, int currData, int loops){
     }
       //CASE 5
     if(closeNeph!=NULL){
-      if(closeNeph->getC() == "red" && distNC == "black"){
+      if(closeNeph->getC() == "red"){
 	cout<<"6"<<endl;
 	if(Pos == "L"){
 	  rightRot(root, sibling);//rotate child into sibling
@@ -647,7 +661,7 @@ void RemFix(Node* & root, Node* & parent, int currData, int loops){
   cout<<closeNC<<distNC<<endl;
   //CASE 6
   if(distNeph!=NULL){
-    if(distNeph->getC() == "red" && closeNC == "black"){
+    if(distNeph->getC() == "red"){
       cout<<"5"<<endl;
       if(Pos == "L"){
 	leftRot(root,parent);//rotate sibling into parent
@@ -665,8 +679,9 @@ void RemFix(Node* & root, Node* & parent, int currData, int loops){
   }//end case 6
   //CASE 5
   if(closeNeph!=NULL){//CASE 5
-    if(closeNeph->getC() == "red" && distNC == "black"){
+    if(closeNeph->getC() == "red"){
       cout<<"6"<<endl;
+      Display(root, 0);
       if(Pos == "L"){
 	rightRot(root, sibling);//rotate child into sibling
 	cout<<"hi"<<endl;
@@ -678,6 +693,7 @@ void RemFix(Node* & root, Node* & parent, int currData, int loops){
       }
       sibling->setC("red");
       closeNeph->setC("black");
+      Display(root, 0);
       distNeph = sibling;
       sibling = closeNeph;
     }
@@ -696,12 +712,14 @@ void RemFix(Node* & root, Node* & parent, int currData, int loops){
   //recursive call to check
   Node* p2 = NULL;
   parent = current->getP();
-  RemFix(root, parent, current->getD(), ++loops);
+  Display(root, 0);
+  RemFix(root, parent, current, ++loops);
   return;
 }
 
 void Remove(Node* & root, Node* & current, string originalC){//actual process to delete
   //deletion
+  cout<<current->getD()<<endl;
   cout<<"found it"<<endl;
   Node* X = NULL;//node that replaces #1
   Node* Y = NULL;//weird in-place successor
@@ -717,55 +735,84 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
     }
     else{
       temp = current->getP();//get parent
-      if(current->getD()<temp->getD()){
-	temp->setL(NULL);
-      }
-      else{
-	temp->setR(NULL);
-      }
-      //so, current is now detached from tree
+      cout<<"parent"<<temp->getD();
+      cout<<"current"<<current->getD();
       cout<<"delete leaf"<<endl;
       if(originalC == "black"){//special corrections for single child
-	RemFix(root, temp, current->getD(), 0);//sending parent, and Pos of deleted root. Parent to find sibling and such.
+	cout<<"will need to fix"<<endl;
+	RemFix(root, temp, current, 0);//sending parent, and Pos of deleted root. Parent to find sibling and such.
       }
-      delete current;
-      current = NULL;
+      else{
+	if(current=temp->getL()){
+	  temp->setL(NULL);
+	}
+	else{
+	  temp->setR(NULL);
+	}
+	//so, current is now detached from tree
+	delete current;
+	current = NULL;
+	Display(root, 0);
+      }
     }
   }
   //C1 current has one leaf which is the right one, so just replace current
   else if(current->getL()==NULL && current->getR()!= NULL){
     cout<<"delete, has right child"<<endl;
+    temp = current->getP();
+    string posC;
+    if(current==temp->getR()){
+      posC = "R";
+    }
+    else{
+      posC = "L";
+    }
     X = current->getR();
     X->setC("black");
     //X -> setP(current->getP());
+    X->setP(temp);
     if(current == root){
-      delete current;
-      X->setP(NULL);
+      cout<<"set root"<<endl;
       root = X;
     }
     else{
-      X -> setP(current->getP());
-      delete current;
-      (X->getP())->setR(X);
+      if(posC == "R"){
+	temp->setR(X);
+      }
+      else{
+	temp->setL(X);
+      }
     }
+    delete current;
     return;
   }
   //C2 current has only left leaf so just replace current
   else if(current->getR() == NULL && current->getL()!=NULL){
     cout<<"delete, has left child"<<endl;
+    temp = current->getP();
+    string posC;
+    if(current==temp->getR()){
+      posC = "R";
+    }
+    else{
+      posC = "L";
+    }
     X = current->getL();
     X->setC("black");
+    X->setP(temp);
     //X -> setP(current->getP());
     if(current == root){
-      delete current;
-      X->setP(NULL);
       root = X;
     }
     else{
-      X -> setP(current->getP());
-      delete current;
-      (X->getP())->setL(X);
+      if(posC == "R"){
+	temp->setR(X);
+      }
+      else{
+	temp->setL(X);
+      }
     }
+    delete current;
     return;
   }
   //C3 I guess we don't delete the Node at the end first and instead like...Call stuff on it and THEN delete it? Anyways, replace w \
