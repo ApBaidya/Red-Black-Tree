@@ -104,11 +104,11 @@ int main(){
 }
 
 void leftRot(Node* & root, Node* & current){
-  cout<<"LEFT"<<endl;
+  //cout<<"LEFT"<<endl;
   Node* parent = NULL;
   parent=current->getP();
   if(parent==NULL){
-    cout<<"rt root"<<endl;
+    //cout<<"rt root"<<endl;
     Node* child = NULL;
     child = current->getR();
     child->setP(NULL);
@@ -136,7 +136,7 @@ void leftRot(Node* & root, Node* & current){
   current->setP(NULL);
   current->setR(NULL);
   if(current == parent->getR()){//current is right child
-    cout<<"L1"<<endl;
+    //cout<<"L1"<<endl;
     parent->setR(NULL);
     child->setP(parent);
     parent->setR(child);
@@ -145,7 +145,7 @@ void leftRot(Node* & root, Node* & current){
     current->setR(leftSub);
   }
   else{//left child
-    cout<<"L2"<<endl;
+    //cout<<"L2"<<endl;
     parent->setL(NULL);
     parent->setL(child);
     child->setP(parent);
@@ -161,7 +161,7 @@ void leftRot(Node* & root, Node* & current){
 
 void rightRot(Node* & root, Node* & current){
   Node* parent = NULL;
-  cout<<"RIGHT"<<endl;
+  //cout<<"RIGHT"<<endl;
   //cout<<"find parent"<<endl;
   //cout<<"current data"<<current->getD()<<endl;
   parent = current->getP();
@@ -170,7 +170,7 @@ void rightRot(Node* & root, Node* & current){
   //cout<<"Right time"<<endl;
   if(parent == NULL){//if we're rotating the root
     //cout<<"rt root"<<endl;
-    cout<<current->getD();
+    //cout<<current->getD();
     Node* child = NULL;
     child = current -> getL();//get the child of current which will become root
     child->setP(NULL);
@@ -188,6 +188,7 @@ void rightRot(Node* & root, Node* & current){
     //cout<<"pppp"<<endl;
     //cout<<current->getP()->getL()<<endl;
     root = current->getP();//set root
+    Display(root, 0);
     return;
   }
   Node* rightSub = NULL;//if child has a right tree
@@ -202,7 +203,7 @@ void rightRot(Node* & root, Node* & current){
   current->setP(NULL);
   current->setL(NULL);
   if( current == parent->getR()){//right child of parent
-    cout<<"R1"<<endl;
+    //cout<<"R1"<<endl;
     parent->setR(NULL);
     child->setP(parent);
     parent->setR(child);
@@ -211,7 +212,7 @@ void rightRot(Node* & root, Node* & current){
     current->setL(rightSub);//set right tree, can be null
   }
   else{//left child of parent
-    cout<<"R2"<<endl;
+    //cout<<"R2"<<endl;
     parent->setL(NULL);
     parent->setL(child);
     child->setP(parent);
@@ -292,7 +293,7 @@ void Fix(Node* & root, Node* & current){
 	  //cout<<"a"<<endl;
 	  current->setC("red");
 	  grandP->setC("black");
-	  cout<<grandP->getD()<<grandP->getP()->getD()<<endl;
+	  //cout<<grandP->getD()<<grandP->getP()->getD()<<endl;
 	  rightRot(root, grandP);
 	  current->getP()->setC("black");
 	  current->setC("red");
@@ -304,6 +305,8 @@ void Fix(Node* & root, Node* & current){
 	  parent->setC("black");
 	  grandP->setC("red");
 	  rightRot(root, grandP);
+	  root->setC("black");
+	  return;
 	  //cout<<grandP->getP()<<endl;
 	  //return;// grandP;
 	}
@@ -782,12 +785,13 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
 	RemFix(root, temp, current, 0);//sending parent, and Pos of deleted root. Parent to find sibling and such.
       }
       else{
-	if(current=temp->getL()){
+	if(current==temp->getL()){
 	  temp->setL(NULL);
 	}
 	else{
 	  temp->setR(NULL);
 	}
+	Display(root, 0);
 	//so, current is now detached from tree
 	delete current;
 	current = NULL;
