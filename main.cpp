@@ -537,6 +537,7 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
   string closeNC;
   string Pos;//pos of current to parent
   if(parent==NULL){//at root
+    root = current;
     return;
   }
   if(c==parent->getL()){//get position of current in relation to parent
@@ -771,6 +772,7 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
       cout<<"delete root, all alone"<<endl;
       cout<<root->getD()<<root->getR()<<root->getL()<<root->getP()<<endl;
       delete current;
+      root = NULL;
       //current = NULL;
       //root = NULL;
       return;
@@ -791,11 +793,11 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
 	else{
 	  temp->setR(NULL);
 	}
-	Display(root, 0);
+	//Display(root, 0);
 	//so, current is now detached from tree
 	delete current;
 	current = NULL;
-	Display(root, 0);
+	//Display(root, 0);
       }
     }
   }
