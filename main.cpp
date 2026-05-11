@@ -635,7 +635,7 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
     }
       //CASE 5
     if(closeNeph!=NULL){
-      if(closeNeph->getC() == "red"){
+      if(closeNeph->getC() == "red" && distNC == "black"){
 	cout<<"6"<<endl;
 	if(Pos == "L"){
 	  rightRot(root, sibling);//rotate child into sibling
@@ -650,6 +650,25 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
 	closeNeph->setC("black");
 	distNeph = sibling;
 	sibling = closeNeph;
+	parent = sibling->getP();
+	//Case 6
+	if(distNeph!=NULL){
+	  if(distNeph->getC() == "red"){
+	    cout<<"51"<<endl;
+	    if(Pos == "L"){
+	      leftRot(root,parent);//rotate sibling into parent
+	      cout<<"hi"<<endl;
+	    }
+	    else{
+	      rightRot(root, parent);
+	      cout<<"hi"<<endl;
+	    }
+	    sibling->setC(parent->getC());
+	    parent->setC("black");
+	    distNeph->setC("black");
+	    return;
+	  }
+	}//end 6
       }
     }//end 5
     //CASE 4
@@ -662,7 +681,7 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
   //CASE 6
   if(distNeph!=NULL){
     if(distNeph->getC() == "red"){
-      cout<<"5"<<endl;
+      cout<<"51"<<endl;
       if(Pos == "L"){
 	leftRot(root,parent);//rotate sibling into parent
 	cout<<"hi"<<endl;
@@ -679,23 +698,43 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
   }//end case 6
   //CASE 5
   if(closeNeph!=NULL){//CASE 5
-    if(closeNeph->getC() == "red"){
-      cout<<"6"<<endl;
+    if(closeNeph->getC() == "red" && distNC == "black"){
+      cout<<"61"<<endl;
       Display(root, 0);
       if(Pos == "L"){
 	rightRot(root, sibling);//rotate child into sibling
 	cout<<"hi"<<endl;
       }
       else{
-	Display(root, 0);
+	//Display(root, 0);
 	leftRot(root, sibling);
 	cout<<"hi"<<endl;
       }
       sibling->setC("red");
       closeNeph->setC("black");
+      cout<<sibling->getD()<<closeNeph->getD()<<endl;
       Display(root, 0);
       distNeph = sibling;
       sibling = closeNeph;
+      parent = sibling->getP();
+      //Case 6
+      if(distNeph!=NULL){
+	if(distNeph->getC() == "red"){
+	  cout<<"51"<<endl;
+	  if(Pos == "L"){
+	    leftRot(root,parent);//rotate sibling into parent
+	    cout<<"hi"<<endl;
+	  }
+	  else{
+	    rightRot(root, parent);
+	    cout<<"hi"<<endl;
+	  }
+	  sibling->setC(parent->getC());
+	  parent->setC("black");
+	  distNeph->setC("black");
+	  return;
+	}
+      }//end 6
     }
   }//end 5
   //CASE 4
@@ -710,7 +749,6 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
   sibling->setC("red");
   current = parent;
   //recursive call to check
-  Node* p2 = NULL;
   parent = current->getP();
   Display(root, 0);
   RemFix(root, parent, current, ++loops);
@@ -729,7 +767,7 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
     if(root == current){//root case
       cout<<"delete root, all alone"<<endl;
       delete current;
-      current = NULL;
+      //current = NULL;
       root = NULL;
       return;
     }
@@ -761,11 +799,13 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
     cout<<"delete, has right child"<<endl;
     temp = current->getP();
     string posC;
-    if(current==temp->getR()){
-      posC = "R";
-    }
-    else{
-      posC = "L";
+    if(temp !=NULL){
+      if(current==temp->getR()){
+	posC = "R";
+      }
+      else{
+	posC = "L";
+      }
     }
     X = current->getR();
     X->setC("black");
@@ -784,6 +824,7 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
       }
     }
     delete current;
+    //cout<<root->getD()<<endl;
     return;
   }
   //C2 current has only left leaf so just replace current
@@ -791,11 +832,13 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
     cout<<"delete, has left child"<<endl;
     temp = current->getP();
     string posC;
-    if(current==temp->getR()){
-      posC = "R";
-    }
-    else{
-      posC = "L";
+    if(temp!=NULL){
+      if(current==temp->getR()){
+	posC = "R";
+      }
+      else{
+	posC = "L";
+      }
     }
     X = current->getL();
     X->setC("black");
