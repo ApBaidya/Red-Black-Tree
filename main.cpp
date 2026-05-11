@@ -766,9 +766,10 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
   if(current->getR()==NULL && current->getL() == NULL){//delete leaf
     if(root == current){//root case
       cout<<"delete root, all alone"<<endl;
+      cout<<root->getD()<<root->getR()<<root->getL()<<root->getP()<<endl;
       delete current;
       //current = NULL;
-      root = NULL;
+      //root = NULL;
       return;
     }
     else{
@@ -811,9 +812,12 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
     X->setC("black");
     //X -> setP(current->getP());
     X->setP(temp);
-    if(current == root){
+    if(current == root){//handle root
+      delete current;
       cout<<"set root"<<endl;
       root = X;
+      root->setP(NULL);
+      return;
     }
     else{
       if(posC == "R"){
@@ -845,7 +849,10 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
     X->setP(temp);
     //X -> setP(current->getP());
     if(current == root){
+      delete current;
       root = X;
+      root->setP(NULL);
+      return;
     }
     else{
       if(posC == "R"){
@@ -899,6 +906,7 @@ void FindRemove(Node* & root, Node* & current, int data, string originalC){
   }
   else{//found node to delete
     Remove(root, current, originalC);
+    cout<<"hoooo wow geez"<<endl;
     return;
   }
 }
