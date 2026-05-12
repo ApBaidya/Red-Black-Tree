@@ -1,5 +1,5 @@
 /*
-Aparajita Baidya 5.11.2026
+Aparajita Baidya 5.12.2026
 Red Black Tree
 
 DONE
@@ -56,12 +56,8 @@ int main(){
       cin.clear();
       Node* tPar = NULL;
       ADD(root, tPar, root, data);
-      //cout<<root->getD();
-      //cout<<"done"<<root->getP()<<endl;
-      if(root->getP()!= NULL){
-	//cout<<root->getP()->getD()<<root->getP()->getL()->getD()<<root->getL()<<endl;
+      cout<<"done"<<endl;
       }
-    }
     if(strcmp(input,"f")==0){
       fileADD(root);
       cout<<"done"<<endl;
@@ -263,7 +259,7 @@ void Fix(Node* & root, Node* & current){
     }
     if(uncle!=NULL){
       unc = uncle->getC();
-      cout<<uncle->getD()<<endl;
+      //cout<<uncle->getD()<<endl;
     }
     else{
       unc = "black";
@@ -287,7 +283,7 @@ void Fix(Node* & root, Node* & current){
 	  parent->setC("black");
 	  grandP->getR()->setC("black");
 	  grandP->setC("red");
-	  cout<<grandP->getC()<<endl;
+	  //cout<<grandP->getC()<<endl;
 	  //Fix(root, grandP);
 	}
       }//end case 1
@@ -657,7 +653,7 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
 	  //cout<<"hi"<<endl;
 	}
 	else{
-	  Display(root, 0);
+	  //Display(root, 0);
 	  leftRot(root, sibling);
 	  //cout<<"hi"<<endl;
 	}
@@ -669,14 +665,14 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
 	//Case 6
 	if(distNeph!=NULL){
 	  if(distNeph->getC() == "red"){
-	    cout<<"51"<<endl;
+	    //cout<<"51"<<endl;
 	    if(Pos == "L"){
 	      leftRot(root,parent);//rotate sibling into parent
-	      cout<<"hi"<<endl;
+	      //cout<<"hi"<<endl;
 	    }
 	    else{
 	      rightRot(root, parent);
-	      cout<<"hi"<<endl;
+	      //cout<<"hi"<<endl;
 	    }
 	    sibling->setC(parent->getC());
 	    parent->setC("black");
@@ -687,23 +683,23 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
       }
     }//end 5
     //CASE 4
-    cout<<"4"<<endl;
+    //cout<<"4"<<endl;
     sibling->setC("red");
     parent->setC("black");
     return;
   }//end red
-  cout<<closeNC<<distNC<<endl;
+  //cout<<closeNC<<distNC<<endl;
   //CASE 6
   if(distNeph!=NULL){
     if(distNeph->getC() == "red"){
-      cout<<"51"<<endl;
+      //cout<<"51"<<endl;
       if(Pos == "L"){
 	leftRot(root,parent);//rotate sibling into parent
-	cout<<"hi"<<endl;
+	//cout<<"hi"<<endl;
       }
       else{
 	rightRot(root, parent);
-	cout<<"hi"<<endl;
+	//cout<<"hi"<<endl;
       }
       sibling->setC(parent->getC());
       parent->setC("black");
@@ -714,20 +710,20 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
   //CASE 5
   if(closeNeph!=NULL){//CASE 5
     if(closeNeph->getC() == "red" && distNC == "black"){
-      cout<<"61"<<endl;
+      //cout<<"61"<<endl;
       Display(root, 0);
       if(Pos == "L"){
 	rightRot(root, sibling);//rotate child into sibling
-	cout<<"hi"<<endl;
+	//cout<<"hi"<<endl;
       }
       else{
 	//Display(root, 0);
 	leftRot(root, sibling);
-	cout<<"hi"<<endl;
+	//cout<<"hi"<<endl;
       }
       sibling->setC("red");
       closeNeph->setC("black");
-      cout<<sibling->getD()<<closeNeph->getD()<<endl;
+      //cout<<sibling->getD()<<closeNeph->getD()<<endl;
       Display(root, 0);
       distNeph = sibling;
       sibling = closeNeph;
@@ -735,14 +731,14 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
       //Case 6
       if(distNeph!=NULL){
 	if(distNeph->getC() == "red"){
-	  cout<<"51"<<endl;
+	  //cout<<"51"<<endl;
 	  if(Pos == "L"){
 	    leftRot(root,parent);//rotate sibling into parent
-	    cout<<"hi"<<endl;
+	    //cout<<"hi"<<endl;
 	  }
 	  else{
 	    rightRot(root, parent);
-	    cout<<"hi"<<endl;
+	    //cout<<"hi"<<endl;
 	  }
 	  sibling->setC(parent->getC());
 	  parent->setC("black");
@@ -754,13 +750,13 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
   }//end 5
   //CASE 4
   if(parent->getC() == "red"){//Curious why this broke everything
-    cout<<"7"<<endl;
+    //cout<<"7"<<endl;
     sibling->setC("red");
     parent->setC("black");
     return;
   }//end case 4
   //CASE 2
-  cout<<"8"<<endl;
+  //cout<<"8"<<endl;
   sibling->setC("red");
   current = parent;
   //recursive call to check
@@ -773,15 +769,15 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
 void Remove(Node* & root, Node* & current, string originalC){//actual process to delete
   //deletion
   cout<<current->getD()<<endl;
-  cout<<"found it"<<endl;
+  //cout<<"found it"<<endl;
   Node* X = NULL;//node that replaces #1
   Node* Y = NULL;//weird in-place successor
   Node* temp = NULL;
   //C0 we have no kids
   if(current->getR()==NULL && current->getL() == NULL){//delete leaf
     if(root == current){//root case
-      cout<<"delete root, all alone"<<endl;
-      cout<<root->getD()<<root->getR()<<root->getL()<<root->getP()<<endl;
+      //cout<<"delete root, all alone"<<endl;
+      //cout<<root->getD()<<root->getR()<<root->getL()<<root->getP()<<endl;
       delete current;
       root = NULL;
       //current = NULL;
@@ -790,11 +786,11 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
     }
     else{
       temp = current->getP();//get parent
-      cout<<"parent"<<temp->getD();
-      cout<<"current"<<current->getD();
-      cout<<"delete leaf"<<endl;
+      //cout<<"parent"<<temp->getD();
+      //cout<<"current"<<current->getD();
+      //cout<<"delete leaf"<<endl;
       if(originalC == "black"){//special corrections for single child
-	cout<<"will need to fix"<<endl;
+	//cout<<"will need to fix"<<endl;
 	RemFix(root, temp, current, 0);//sending parent, and Pos of deleted root. Parent to find sibling and such.
       }
       else{
@@ -814,7 +810,7 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
   }
   //C1 current has one leaf which is the right one, so just replace current
   else if(current->getL()==NULL && current->getR()!= NULL){
-    cout<<"delete, has right child"<<endl;
+    //cout<<"delete, has right child"<<endl;
     temp = current->getP();
     string posC;
     if(temp !=NULL){
@@ -831,7 +827,7 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
     X->setP(temp);
     if(current == root){//handle root
       delete current;
-      cout<<"set root"<<endl;
+      //cout<<"set root"<<endl;
       root = X;
       root->setP(NULL);
       return;
@@ -850,7 +846,7 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
   }
   //C2 current has only left leaf so just replace current
   else if(current->getR() == NULL && current->getL()!=NULL){
-    cout<<"delete, has left child"<<endl;
+    //cout<<"delete, has left child"<<endl;
     temp = current->getP();
     string posC;
     if(temp!=NULL){
@@ -886,7 +882,7 @@ void Remove(Node* & root, Node* & current, string originalC){//actual process to
   /successor
   else{//2 kids, crazy
     //will be using x a a temp when finding the successor
-    cout<<"delete, has 2 kids"<<endl;
+    //cout<<"delete, has 2 kids"<<endl;
     X = current;
     Y = current->getR();
     while(Y -> getL() != NULL){
@@ -909,7 +905,7 @@ void FindRemove(Node* & root, Node* & current, int data, string originalC){
   }
   originalC = current -> getC();//store original color
   if(current->getD()!=data){//recurse
-    cout<<"looking"<<endl;
+    //cout<<"looking"<<endl;
     if(data < current->getD()){//go left
       Node* l = NULL;
       l = current->getL();
@@ -923,7 +919,7 @@ void FindRemove(Node* & root, Node* & current, int data, string originalC){
   }
   else{//found node to delete
     Remove(root, current, originalC);
-    cout<<"hoooo wow geez"<<endl;
+    //cout<<"hoooo wow geez"<<endl;
     return;
   }
 }
