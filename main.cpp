@@ -1,5 +1,5 @@
 /*
-Aparajita Baidya 5.10.2026
+Aparajita Baidya 5.11.2026
 Red Black Tree
 
 DONE
@@ -22,12 +22,7 @@ Deletion due 5.15
 using namespace std;
 
 //function defs
-void Case6(Node* & root, Node* & current);
-void Case5(Node* & root, Node* & current);
-void Case4(Node* & root, Node* & current);
-void Case3(Node* & root, Node* & current);
-void Case2(Node* & root, Node* & current);
-void Case1(Node* & root, Node* & current);
+void getDepth(Node * current, int depth);
 void RemFix(Node* & root, Node* & parent, Node* c, int loops);
 void Remove(Node* & root, Node* & current, string originalC);
 void FindRemove(Node* & root, Node* & current, int data, string originalC);
@@ -97,10 +92,26 @@ int main(){
       Display(root, 0);
       running = 0;
     }
+    if(strcmp(input, "b")==0){//hahaha secret 
+      getDepth(root, 0);
+    }
     cout<<endl;
   }
   cout<<"Bye!"<<endl;
   return 0;
+}
+void getDepth(Node * current, int depth){
+  if(!current){
+    cout<<depth<<endl;
+    return;
+  }
+  if(current->getC() == "black"){
+    ++depth;
+  }
+  //left
+  getDepth(current->getL(), depth);
+  //right
+  getDepth(current->getL(), depth);
 }
 
 void leftRot(Node* & root, Node* & current){
@@ -188,7 +199,7 @@ void rightRot(Node* & root, Node* & current){
     //cout<<"pppp"<<endl;
     //cout<<current->getP()->getL()<<endl;
     root = current->getP();//set root
-    Display(root, 0);
+    //Display(root, 0);
     return;
   }
   Node* rightSub = NULL;//if child has a right tree
@@ -475,7 +486,7 @@ void Search(Node* current, int data){
   //well, this is just a binary search tree...
   //end
   if(!current){
-    cout<<"このNUMBER がありません。";
+    //cout<<"このNUMBER がありません。";
     return;
   }
   else if(current->getD() == data){
@@ -487,7 +498,7 @@ void Search(Node* current, int data){
       Search(current->getR(), data);
       return;
     }
-    cout<<"no"<<endl;
+    //cout<<"no"<<endl;
     return;
   }
   else if(data < current->getD()){//left
@@ -495,7 +506,7 @@ void Search(Node* current, int data){
       Search(current->getL(), data);
       return;
     }
-    cout<<"NO"<<endl;
+    //cout<<"NO"<<endl;
     return;
   }
   else{
@@ -525,10 +536,10 @@ void Quit(Node* & current){
 
 //OKAY NOW ONTO PART 2 OF THIS CHAOS PROJECT
 void RemFix(Node* & root, Node* & parent, Node* c, int loops){
-  cout<<"訣別の時が来たれり"<<endl;
+  //cout<<"訣別の時が来たれり"<<endl;
   int currData = c->getD();
-  cout<<currData<<endl;
-  Display(root, 0);
+  //cout<<currData<<endl;
+  //Display(root, 0);
   Node* current = NULL;
   Node* sibling = NULL;
   Node* distNeph = NULL;
@@ -556,12 +567,12 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
     delete c;
     //so, current is now detached from tree
   }
-  cout<<"setRel"<<endl;
+  //cout<<"setRel"<<endl;
   //set up relatives, heh
   if(Pos == "L"){//WHEN CURRENT LEFT
     sibling = parent->getR();//get sibling
     if(sibling == NULL){//no need to do things without sibling I Guess?
-      cout<<"Ret"<<endl;
+      //cout<<"Ret"<<endl;
       return;
     }
     distNeph = sibling->getR();
@@ -570,13 +581,13 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
   else{//RIGHT
     sibling = parent->getL();
     if(sibling == NULL){
-      cout<<"ret"<<endl;
+      //cout<<"ret"<<endl;
       return;
     }
     distNeph = sibling->getL();
     closeNeph = sibling->getR();
   }
-  cout<<"neph col find"<<endl;
+  //cout<<"neph col find"<<endl;
   //find color of nephews
   if(!distNeph){
     distNC = "black";
@@ -593,14 +604,14 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
   //ONTO THE CASES
   //CAASE 3: if sibling is red
   if(sibling->getC() == "red"){
-    cout<<"1"<<endl;
+    //cout<<"1"<<endl;
     if(Pos == "R"){//rotate depending on Pos
       rightRot(root, parent);//please check this again
-      cout<<"hi"<<endl;
+      //cout<<"hi"<<endl;
     }
     else{
       leftRot(root, parent);
-      cout<<"hi"<<endl;
+      //cout<<"hi"<<endl;
     }
     parent->setC("red");//change colors
     sibling->setC("black");
@@ -616,14 +627,14 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
     //CASE 6
     if(distNeph!=NULL){
       if(distNeph->getC() == "red"){
-	cout<<"5"<<endl;
+	//cout<<"5"<<endl;
 	if(Pos == "L"){
 	  leftRot(root,parent);//rotate sibling into parent
-	  cout<<"hi"<<endl;
+	  //cout<<"hi"<<endl;
 	}
 	else{
 	  rightRot(root, parent);
-	  cout<<"hi"<<endl;
+	  //cout<<"hi"<<endl;
 	}
 	sibling->setC(parent->getC());
 	parent->setC("black");
@@ -640,15 +651,15 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
       //CASE 5
     if(closeNeph!=NULL){
       if(closeNeph->getC() == "red" && distNC == "black"){
-	cout<<"6"<<endl;
+	//cout<<"6"<<endl;
 	if(Pos == "L"){
 	  rightRot(root, sibling);//rotate child into sibling
-	  cout<<"hi"<<endl;
+	  //cout<<"hi"<<endl;
 	}
 	else{
 	  Display(root, 0);
 	  leftRot(root, sibling);
-	  cout<<"hi"<<endl;
+	  //cout<<"hi"<<endl;
 	}
 	sibling->setC("red");
 	closeNeph->setC("black");
