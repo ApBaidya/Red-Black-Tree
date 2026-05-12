@@ -443,6 +443,7 @@ void fileADD(Node* & root){
 
 //display
 void Display(Node* current, int depth){
+  //cout<<"qqq"<<endl;
   //empty
   if(!current){
     return;
@@ -598,16 +599,16 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
     closeNC = closeNeph->getC();
   }
   //ONTO THE CASES
-  //CAASE 3: if sibling is red
+  //CASE 3: if sibling is red
   if(sibling->getC() == "red"){
-    //cout<<"1"<<endl;
+    cout<<"1"<<endl;
     if(Pos == "R"){//rotate depending on Pos
       rightRot(root, parent);//please check this again
-      //cout<<"hi"<<endl;
+      cout<<"hi"<<endl;
     }
     else{
       leftRot(root, parent);
-      //cout<<"hi"<<endl;
+      cout<<"hi"<<endl;
     }
     parent->setC("red");//change colors
     sibling->setC("black");
@@ -623,14 +624,14 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
     //CASE 6
     if(distNeph!=NULL){
       if(distNeph->getC() == "red"){
-	//cout<<"5"<<endl;
+	cout<<"5"<<endl;
 	if(Pos == "L"){
 	  leftRot(root,parent);//rotate sibling into parent
-	  //cout<<"hi"<<endl;
+	  cout<<"hi"<<endl;
 	}
 	else{
 	  rightRot(root, parent);
-	  //cout<<"hi"<<endl;
+	  cout<<"hi"<<endl;
 	}
 	sibling->setC(parent->getC());
 	parent->setC("black");
@@ -647,15 +648,15 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
       //CASE 5
     if(closeNeph!=NULL){
       if(closeNeph->getC() == "red" && distNC == "black"){
-	//cout<<"6"<<endl;
+	cout<<"6"<<endl;
 	if(Pos == "L"){
 	  rightRot(root, sibling);//rotate child into sibling
-	  //cout<<"hi"<<endl;
+	  cout<<"hi"<<endl;
 	}
 	else{
-	  //Display(root, 0);
+	  Display(root, 0);
 	  leftRot(root, sibling);
-	  //cout<<"hi"<<endl;
+	  cout<<"hi"<<endl;
 	}
 	sibling->setC("red");
 	closeNeph->setC("black");
@@ -665,14 +666,14 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
 	//Case 6
 	if(distNeph!=NULL){
 	  if(distNeph->getC() == "red"){
-	    //cout<<"51"<<endl;
+	    cout<<"51"<<endl;
 	    if(Pos == "L"){
 	      leftRot(root,parent);//rotate sibling into parent
-	      //cout<<"hi"<<endl;
+	      cout<<"hi"<<endl;
 	    }
 	    else{
 	      rightRot(root, parent);
-	      //cout<<"hi"<<endl;
+	      cout<<"hi"<<endl;
 	    }
 	    sibling->setC(parent->getC());
 	    parent->setC("black");
@@ -683,7 +684,7 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
       }
     }//end 5
     //CASE 4
-    //cout<<"4"<<endl;
+    cout<<"4"<<endl;
     sibling->setC("red");
     parent->setC("black");
     return;
@@ -692,14 +693,14 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
   //CASE 6
   if(distNeph!=NULL){
     if(distNeph->getC() == "red"){
-      //cout<<"51"<<endl;
+      cout<<"51"<<endl;
       if(Pos == "L"){
 	leftRot(root,parent);//rotate sibling into parent
-	//cout<<"hi"<<endl;
+	cout<<"hi"<<endl;
       }
       else{
 	rightRot(root, parent);
-	//cout<<"hi"<<endl;
+	cout<<"hi"<<endl;
       }
       sibling->setC(parent->getC());
       parent->setC("black");
@@ -710,20 +711,20 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
   //CASE 5
   if(closeNeph!=NULL){//CASE 5
     if(closeNeph->getC() == "red" && distNC == "black"){
-      //cout<<"61"<<endl;
+      cout<<"61"<<endl;
       Display(root, 0);
       if(Pos == "L"){
 	rightRot(root, sibling);//rotate child into sibling
-	//cout<<"hi"<<endl;
+	cout<<"hi"<<endl;
       }
       else{
 	//Display(root, 0);
 	leftRot(root, sibling);
-	//cout<<"hi"<<endl;
+	cout<<"hi"<<endl;
       }
       sibling->setC("red");
       closeNeph->setC("black");
-      //cout<<sibling->getD()<<closeNeph->getD()<<endl;
+      cout<<sibling->getD()<<closeNeph->getD()<<endl;
       Display(root, 0);
       distNeph = sibling;
       sibling = closeNeph;
@@ -731,14 +732,14 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
       //Case 6
       if(distNeph!=NULL){
 	if(distNeph->getC() == "red"){
-	  //cout<<"51"<<endl;
+	  cout<<"51"<<endl;
 	  if(Pos == "L"){
 	    leftRot(root,parent);//rotate sibling into parent
-	    //cout<<"hi"<<endl;
+	    cout<<"hi"<<endl;
 	  }
 	  else{
 	    rightRot(root, parent);
-	    //cout<<"hi"<<endl;
+	    cout<<"hi"<<endl;
 	  }
 	  sibling->setC(parent->getC());
 	  parent->setC("black");
@@ -750,19 +751,27 @@ void RemFix(Node* & root, Node* & parent, Node* c, int loops){
   }//end 5
   //CASE 4
   if(parent->getC() == "red"){//Curious why this broke everything
-    //cout<<"7"<<endl;
+    cout<<"7"<<endl;
     sibling->setC("red");
     parent->setC("black");
     return;
   }//end case 4
   //CASE 2
-  //cout<<"8"<<endl;
+  cout<<"end 8"<<endl;
   sibling->setC("red");
-  current = parent;
+  Node* newCurrent = NULL;
+  newCurrent = parent;
+  Node* newParent = NULL;
+  newParent = newCurrent->getP();
+  //current = parent;
   //recursive call to check
-  parent = current->getP();
+  //parent = current->getP();
   Display(root, 0);
-  RemFix(root, parent, current, ++loops);
+  root = root;
+  if(newParent){
+    RemFix(root, newParent, newCurrent, ++loops);
+  }
+  cout<<root->getD()<<endl;
   return;
 }
 
